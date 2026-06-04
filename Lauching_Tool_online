@@ -1,0 +1,51 @@
+Getting this online so your customers can actually use it is the perfect next step! GitHub Pages is completely free, very reliable, and exactly what web developers use to host simple, single-file applications like yours.
+
+Here is the step-by-step process to get your plant finder live on the web.
+Prep Step: Rename Your File
+
+Before we begin, find the file you saved on your computer and rename it from Complete_Virginia_Native_Finder.html to exactly index.html.
+
+(Note: Naming it index.html tells the web server that this is the main home page to load when someone clicks your link).
+Step 1: Create a Free GitHub Account
+
+    Go to GitHub.com.
+
+    Click Sign up in the top right corner and create a free account. (You only need an email address and a password).
+
+Step 2: Create a "Repository" (Your Website's Folder)
+
+    Once logged in, look for the + icon in the top right corner of the screen and select New repository.
+
+    Under Repository name, type a simple name for your project (for example: native-plant-finder). This will become part of your website link.
+
+    Make sure the Public option is selected so your customers can see it.
+
+    Click the green Create repository button at the bottom.
+
+Step 3: Upload Your File
+
+    On the next screen, look for the blue link that says uploading an existing file (it's near the top, under the "Quick setup" section).
+
+    Drag and drop your newly renamed index.html file into the box on the screen, or click "choose your files" to select it.
+
+    Once the file finishes uploading, scroll down to the green Commit changes button and click it.
+
+Step 4: Turn on GitHub Pages (Make it Live!)
+
+    Near the top of your repository page, click the Settings tab (it has a little gear icon next to it).
+
+    On the left-hand menu, scroll down and click on Pages.
+
+    Under the Build and deployment section, look for the Branch dropdown menu (it currently says "None").
+
+    Click the dropdown, select main (or master), and click the Save button right next to it.
+
+Step 5: Get Your Live Link
+
+    Wait about 1 to 2 minutes—GitHub is working behind the scenes to build your site.
+
+    Refresh the page. At the very top of the GitHub Pages settings, you will see a notification that says: "Your site is live at https://[your-username].github.io/native-plant-finder/".
+
+    Click that link!
+
+You can now copy that URL and paste it into your newsletters, social media, or link it directly from your main business website.
