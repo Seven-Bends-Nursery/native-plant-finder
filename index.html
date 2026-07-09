@@ -3,219 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Ridge & Valley Native Plant Finder</title>
+    <title>Virginia Native Plant Finder & Inventory</title>
+    
     <style>
         :root { --dark-green: #1b3022; --leaf: #4a6741; --bg: #f9fbf9; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 1250px; margin: 0 auto; }
         header { background: var(--dark-green); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
+        
         .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-                    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; 
+                    display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
                     margin-bottom: 25px; position: sticky; top: 10px; z-index: 1000; border: 1px solid #ddd; }
-        .group { display: flex; flex-direction: column; }
+        .group { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
         label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark-green); }
-        select, input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
+        select, input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
+        
+        /* Toggle Switch for Inventory */
+        .toggle-container { display: flex; align-items: center; gap: 10px; min-width: 150px; padding-bottom: 10px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--leaf); }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
+
         .stats { font-weight: bold; margin-bottom: 15px; color: var(--leaf); font-size: 1.1rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.2s; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
         .card-inner { padding: 18px; flex-grow: 1; }
-        .common-name { font-size: 1.2rem; font-weight: bold; color: var(--dark-green); margin: 0; }
-        .sci-name { font-style: italic; color: #666; font-size: 0.85rem; margin-bottom: 12px; display: block; }
-        .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-        .tag { background: #f0f4ef; color: var(--leaf); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
-        .desc { font-size: 0.9rem; line-height: 1.5; color: #555; }
-        .promo { background: #fff8e1; color: #856404; padding: 10px; font-size: 0.75rem; text-align: center; font-weight: bold; border-top: 1px solid #ffeeba; }
-    /* Toggle Switch & Inventory Tags */
-        .toggle-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; min-width: 150px; }
-        .toggle-group input { width: 18px; height: 18px; cursor: pointer; }
-        .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
-        .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.8rem; }
+        .common-name { font-size: 1.25rem; font-weight: bold; color: var(--dark-green); margin: 0; }
+        .sci-name { font-style: italic; color: #666; font-size: 0.85rem; margin-bottom: 15px; display: block; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag { background: #f0f4ef; color: var(--leaf); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
+        .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.85rem; }
         .inv-out { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        .promo { background: #fff8e1; color: #856404; padding: 10px; font-size: 0.75rem; text-align: center; font-weight: bold; border-top: 1px solid #ffeeba; }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>Seven Bends Nursery</h1>
-        <p>Interactive Database for Native Plant Inventory</p>
+        <h1>Plant Ridge & Valley Natives</h1>
+        <p>Live Inventory & Native Plant Database</p>
     </header>
     <div class="controls">
         <div class="group"><label>Search Plants</label><input type="text" id="search" placeholder="Name or keyword..."></div>
         <div class="group"><label>Category</label><select id="fCat"><option value="all">All Categories</option></select></div>
         <div class="group"><label>Light Requirement</label><select id="fLight"><option value="all">Any Light</option></select></div>
         <div class="group"><label>Moisture Need</label><select id="fMoist"><option value="all">Any Moisture</option></select></div>
-   <div class="group toggle-group">
-            <input type="checkbox" id="fStock" checked>
+        
+        <div class="toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="fStock" checked>
+                <span class="slider"></span>
+            </label>
             <label for="fStock" class="toggle-label">In Stock Only</label>
         </div>
     </div>
-    <div class="stats">Showing <span id="count">0</span> plants</div>
+    <div class="stats" id="statusMessage">Loading databases...</div>
     <div id="grid" class="grid"></div>
 </div>
 
-
-
 <script>
-    // 1. Read the embedded database
-// We will store the data globally once it loads
-let plantData = [];
+    let plantData = [];
+    let inventoryMap = {};
 
-// 1. Fetch the CSV file from your server
-async function loadDatabase() {
-    try {
-        // Change this filename if you name your file something else!
-        const response = await fetch('Spinfo_20260521.csv'); 
-        const csvText = await response.text();
-        
-        processCSV(csvText);
-    } catch (error) {
-        console.error("Error loading the plant database:", error);
-        document.getElementById('grid').innerHTML = "<p>Sorry, the plant database is currently updating. Please check back in a moment!</p>";
+    // 1. Fetch both CSV files simultaneously
+    async function loadDatabases() {
+        try {
+            const [spinfoRes, squareRes] = await Promise.all([
+                fetch('Spinfo_20260521.csv'),
+                // Update this filename if your export is named something else!
+                fetch('SquareExport_catalog-2026-07-09.csv') 
+            ]);
+
+            if (!spinfoRes.ok || !squareRes.ok) {
+                throw new Error("One or both CSV files could not be found.");
+            }
+
+            const spinfoText = await spinfoRes.text();
+            const squareText = await squareRes.text();
+
+            processInventory(squareText);
+            processSpinfo(spinfoText);
+            
+            document.getElementById('statusMessage').innerHTML = 'Showing <span id="count">0</span> plants';
+        } catch (error) {
+            console.error("Error loading files:", error);
+            document.getElementById('statusMessage').innerText = "Error loading databases. Please ensure both CSV files are uploaded to your server.";
+        }
     }
-}
 
-// 2. A robust CSV parser to handle commas inside your descriptions
-function parseCSV(str) {
-    const arr = [];
-    let quote = false;
-    let row = 0, col = 0;
-    for (let c = 0; c < str.length; c++) {
-        let cc = str[c], nc = str[c+1];
-        arr[row] = arr[row] || [];
-        arr[row][col] = arr[row][col] || '';
-        
-        if (cc === '"' && quote && nc === '"') { arr[row][col] += cc; ++c; continue; }
-        if (cc === '"') { quote = !quote; continue; }
-        if (cc === ',' && !quote) { ++col; continue; }
-        if (cc === '\r' && nc === '\n' && !quote) { ++row; col = 0; ++c; continue; }
-        if (cc === '\n' && !quote) { ++row; col = 0; continue; }
-        if (cc === '\r' && !quote) { ++row; col = 0; continue; }
-        
-        arr[row][col] += cc;
+    // 2. A robust, reusable CSV parser
+    function parseCSV(str) {
+        const arr = [];
+        let quote = false;
+        let row = 0, col = 0;
+        for (let c = 0; c < str.length; c++) {
+            let cc = str[c], nc = str[c+1];
+            arr[row] = arr[row] || [];
+            arr[row][col] = arr[row][col] || '';
+            
+            if (cc === '"' && quote && nc === '"') { arr[row][col] += cc; ++c; continue; }
+            if (cc === '"') { quote = !quote; continue; }
+            if (cc === ',' && !quote) { ++col; continue; }
+            if (cc === '\r' && nc === '\n' && !quote) { ++row; col = 0; ++c; continue; }
+            if (cc === '\n' && !quote) { ++row; col = 0; continue; }
+            if (cc === '\r' && !quote) { ++row; col = 0; continue; }
+            
+            arr[row][col] += cc;
+        }
+        return arr;
     }
-    return arr;
-}
 
-// 3. Convert the CSV into our app's format
-function processCSV(csvText) {
-    const data = parseCSV(csvText);
-    const headers = data[0].map(h => h.trim());
-    const nonPlantCategories = ['Books', 'Services', 'Gift Card', 'Stickers', 'Supplies', 'Blank'];
-    
-    plantData = [];
-    
-    for (let i = 1; i < data.length; i++) {
-        if (data[i].length < 5) continue; 
+    // 3. Process the Square Inventory CSV
+    function processInventory(csvText) {
+        const data = parseCSV(csvText);
+        if (data.length < 2) return;
+
+        const headers = data[0].map(h => h.trim());
         
-        let obj = {};
-        headers.forEach((h, index) => {
-            obj[h] = data[i][index] ? data[i][index].trim() : '';
+        // Find the correct column numbers regardless of exact formatting
+        const nameIdx = headers.findIndex(h => h === 'Item.Name' || h === 'Item Name');
+        const qtyIdx = headers.findIndex(h => h.includes('Current Quantity') || h.includes('Current.Quantity'));
+
+        if (nameIdx === -1 || qtyIdx === -1) {
+            console.error("Could not find the 'Item Name' or 'Quantity' columns in the Square CSV.");
+            return;
+        }
+
+        for (let i = 1; i < data.length; i++) {
+            if (data[i].length <= Math.max(nameIdx, qtyIdx)) continue;
+            
+            let itemName = data[i][nameIdx].trim();
+            let qty = parseInt(data[i][qtyIdx].trim(), 10) || 0;
+
+            if (itemName) {
+                // Extract just the scientific name (everything before the parenthesis)
+                let sciName = itemName.split('(')[0].trim().toLowerCase();
+                // Tally inventory (handles multiple pot sizes of the same species)
+                inventoryMap[sciName] = (inventoryMap[sciName] || 0) + qty;
+            }
+        }
+    }
+
+    // 4. Process the Main Plant Database
+    function processSpinfo(csvText) {
+        const data = parseCSV(csvText);
+        const headers = data[0].map(h => h.trim());
+        const nonPlantCategories = ['Books', 'Services', 'Gift Card', 'Stickers', 'Supplies', 'Blank'];
+        
+        plantData = [];
+        
+        for (let i = 1; i < data.length; i++) {
+            if (data[i].length < 5) continue; 
+            
+            let obj = {};
+            headers.forEach((h, index) => {
+                obj[h] = data[i][index] ? data[i][index].trim() : '';
+            });
+
+            // Filter out non-plant rows
+            if (!obj['Category'] || nonPlantCategories.includes(obj['Category'])) continue;
+
+            // Map the inventory count from the inventoryMap
+            let sciNameLower = (obj['Scientific Name'] || '').trim().toLowerCase();
+            let currentInv = inventoryMap[sciNameLower] || 0;
+
+            plantData.push({
+                cat: obj['Category'].replace('_MF', ''),
+                s: obj['Scientific Name'],
+                c: obj['Common Name'],
+                l: obj['Light'] || '',
+                m: obj['Moisture'] || '',
+                h: obj['Size_Concat'] ? obj['Size_Concat'].split(';')[0].replace('Height:', '').trim() : '',
+                d: obj['DescriptionBase'] || '',
+                inv: currentInv
+            });
+        }
+        
+        init(); // Populate dropdowns once parsing is finished
+    }
+
+    // 5. Update UI Based on User Filters
+    function update() {
+        const s = document.getElementById('search').value.toLowerCase();
+        const c = document.getElementById('fCat').value;
+        const l = document.getElementById('fLight').value;
+        const m = document.getElementById('fMoist').value;
+        const inStock = document.getElementById('fStock').checked;
+
+        const filtered = plantData.filter(p => {
+            const matchesSearch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
+            const matchesCat = c === 'all' || p.cat === c;
+            const matchesLight = l === 'all' || p.l.includes(l);
+            const matchesMoist = m === 'all' || p.m.includes(m);
+            const matchesStock = !inStock || p.inv > 0;
+            return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesStock;
         });
 
-        // Skip non-plants
-        if (!obj['Category'] || nonPlantCategories.includes(obj['Category'])) continue;
-
-        plantData.push({
-            cat: obj['Category'].replace('_MF', ''),
-            s: obj['Scientific Name'],
-            c: obj['Common Name'],
-            l: obj['Light'] || '',
-            m: obj['Moisture'] || '',
-            h: obj['Size_Concat'] ? obj['Size_Concat'].split(';')[0].replace('Height:', '').trim() : '',
-            d: obj['DescriptionBase'] || '',
-            // If you add an "Inventory" column to your CSV later, you can map it here!
-            inv: obj['Inventory'] ? parseInt(obj['Inventory'], 10) : 1 
+        // Sort by highest inventory first, then alphabetically
+        filtered.sort((a, b) => {
+            if (b.inv !== a.inv) return b.inv - a.inv;
+            return a.c.localeCompare(b.c);
         });
-    }
-    
-    init(); // Setup the dropdowns now that data is loaded
-}
 
-// Run the fetch command as soon as the page loads
-loadDatabase();
+        const countSpan = document.getElementById('count');
+        if(countSpan) countSpan.innerText = filtered.length;
 
-// ... Keep your existing update() and init() functions right below this ...    
-    // 2. Parse the pipe-delimited data
-    const plantData = rawText.split('\n').filter(line => line.trim().length > 0).map(line => {
-        const p = line.split('|');
-        return { cat: p[0], s: p[1], c: p[2], l: p[3], m: p[4], h: p[5], d: p[6] };
-    });
+        const grid = document.getElementById('grid');
+        grid.innerHTML = filtered.map(p => {
+            const isEligible = p.d.includes('Throwing Shade');
+            const cleanDesc = p.d.replace('Throwing Shade', '').trim();
+            const invTagHtml = p.inv > 0 
+                ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
+                : `<span class="tag inv-out">❌ Out of stock</span>`;
 
-    // 3. Update the UI based on filters
- // Live Inventory Data consolidated from Seven Bends
-const inventoryData = {
-    "baptisia australis": 637, "symphyotrichum novae-angliae": 425, "eurybia macrophylla": 386, "monarda fistulosa": 339, "carex appalachica": 335, "carex radiata": 322, "penstemon hirsutus": 299, "symphyotrichum cordifolium": 249, "pycnanthemum virginianum": 239, "monarda punctata": 239, "danthonia spicata": 214, "oligoneuron rigidum": 211, "sporobolus heterolepis": 208, "eutrochium fistulosum": 207, "agastache scrophulariifolia": 206, "carex amphibola": 186, "monarda didyma": 185, "elymus virginicus": 184, "silene virginica": 183, "aquilegia canadensis": 178, "carex plantaginea": 174, "bouteloua curtipendula": 169, "vernonia gigantea": 160, "symphyotrichum oblongifolium": 158, "crataegus phaenopyrum": 151, "packera aurea": 148, "eupatorium hyssopifolium": 147, "pycnanthemum tenuifolium": 143, "aster puniceus": 139, "spiraea latifolia": 139, "ruellia humilis": 138, "polemonium reptans": 137, "tiarella cordifolia": 136, "heliopsis helianthoides": 133, "opuntia humifusa": 133, "baptisia tinctoria": 126, "coreopsis tripteris": 125, "blephilia ciliata": 119, "elymus hystrix": 118, "euthamia graminifolia": 117, "magnolia virginiana": 117, "aronia melanocarpa": 111, "iris versicolor": 109, "ageratina altissima": 108, "antennaria parlinii": 106, "solidago speciosa": 106, "asclepias tuberosa": 105, "allium cernuum": 105, "sedum pulchellum": 103, "pycnanthemum muticum": 100, "sorghastrum nutans": 97, "solidago juncea": 93, "quercus rubra": 92, "coreopsis lanceolata": 90, "morella pensylvanica": 90, "chionanthus virginicus": 87, "verbena hastata": 87, "salvia lyrata": 81, "prunus angustifolia": 81, "quercus palustris": 80, "eupatorium perfoliatum": 78, "platanus occidentalis": 78, "zizia aurea": 77, "chasmanthium latifolium": 77, "parathelypteris noveboracensis": 73, "scirpus atrovirens": 72, "ilex verticillata": 71, "mimulus ringens": 70, "sambucus canadensis": 70, "parthenium integrifolium": 69, "senna hebecarpa": 66, "quercus alba": 64, "rudbeckia fulgida": 63, "cornus racemosa": 62, "adiantum pedatum": 62, "heuchera villosa": 61, "geranium maculatum": 60, "aronia arbutifolia": 53, "quercus macrocarpa": 53, "athyrium filix-femina": 53, "polystichum acrostichoides": 52, "scirpus cyperinus": 52, "viburnum trilobum": 51, "cornus amomum": 51, "amorpha fruticosa": 51, "clethra alnifolia": 51, "carex flaccosperma": 50, "helianthus angustifolius": 48, "juniperus virginiana": 47, "zizia aptera": 46, "viburnum lentago": 45, "asclepias verticillata": 45, "tradescantia virginiana": 45, "eryngium yuccifolium": 43, "prunus americana": 43, "andropogon gerardii": 42, "viburnum dentatum": 41, "dryopteris marginalis": 41, "carex blanda": 41, "castanea pumila": 39, "cephalanthus occidentalis": 37, "amelanchier laevis": 37, "hypericum prolificum": 37, "osmunda spectabilis": 36, "acorus americanus": 36, "salix discolor": 34, "asimina triloba": 34, "acer rubrum": 32, "euonymus americanus": 31, "coreopsis verticillata": 30, "erigeron pulchellus": 30, "eupatorium purpureum": 30, "phlox divaricata": 28, "corylus americana": 27, "eragrostis spectabilis": 26, "solidago caesia": 26, "ruellia strepens": 26, "quercus bicolor": 26, "betula nigra": 24, "panicum virgatum": 22, "rhus typhina": 21, "ludwigia alternifolia": 21, "rudbeckia laciniata": 21, "oxydendrum arboreum": 21, "gymnocladus dioicus": 21, "onoclea sensibilis": 21, "hydrangea arborescens": 20, "magnolia tripetala": 20, "betula populifolia": 19, "carpinus caroliniana": 18, "lobelia cardinalis": 18, "dodecatheon amethystinum": 18, "diospyros virginiana": 18, "fagus grandifolia": 17, "hamamelis virginiana": 16, "ilex glabra": 16, "matteuccia struthiopteris": 15, "iris cristata": 15, "ceanothus americanus": 15, "filipendula rubra": 15, "lobelia siphilitica": 15, "delphinium exaltatum": 15, "chelone glabra": 15, "caltha palustris": 15, "asclepias exaltata": 15, "hibiscus laevis": 15, "quercus prinoides": 15, "nyssa sylvatica": 15, "itea virginica": 15, "rhus aromatica": 13, "clematis virginiana": 12, "solidago flexicaulis": 12, "antennaria neglecta": 12, "helenium autumnale": 12, "antennaria plantaginifolia": 12, "quercus prinus": 12, "amelanchier canadensis": 10, "veronicastrum virginicum": 10, "acer saccharum": 10, "physocarpus opulifolius": 10, "silene caroliniana": 8, "baccharis halimifolia": 8, "symphoricarpos albus": 8, "ostrya virginiana": 8, "phlox paniculata": 7, "smallanthus uvedalius": 6, "solidago canadensis": 6, "solidago odora": 6, "acer pensylvanicum": 6, "viburnum prunifolium": 5, "viburnum nudum": 5, "staphylea trifolia": 5, "juglans nigra": 5, "quercus phellos": 5, "cornus florida": 5, "carex pensylvanica": 4, "rhododendron arborescens": 4, "vaccinium corymbosum": 4, "rosa carolina": 4, "pinus strobus": 4, "cercis canadensis": 4, "trillium grandiflorum": 3, "vernonia noveboracensis": 3, "alnus serrulata": 3, "rosa palustris": 3, "callicarpa americana": 3, "franklinia alatamaha": 3, "prunus serotina": 3, "castanea dentata": 3, "aristolochia tomentosa": 3, "dennstaedtia punctilobula": 2, "osmunda cinnamomea": 2, "liriodendron tulipifera": 2, "betula papyrifera": 2, "acer saccharinum": 2, "viburnum acerifolium": 1, "myrica cerifera": 1
-};
-
-function update() {
-    const s = document.getElementById('search').value.toLowerCase();
-    const c = document.getElementById('fCat').value;
-    const l = document.getElementById('fLight').value;
-    const m = document.getElementById('fMoist').value;
-    const inStock = document.getElementById('fStock').checked;
-
-    // Map inventory data to the main plant list dynamically
-    const enrichedData = plantData.map(p => {
-        const sciNameLower = p.s.toLowerCase().trim();
-        p.inv = inventoryData[sciNameLower] || 0;
-        return p;
-    });
-
-    const filtered = enrichedData.filter(p => {
-        const sMatch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
-        const cMatch = c === 'all' || p.cat === c;
-        const lMatch = l === 'all' || p.l.includes(l);
-        const mMatch = m === 'all' || p.m.includes(m);
-        const stockMatch = !inStock || p.inv > 0;
-        return sMatch && cMatch && lMatch && mMatch && stockMatch;
-    });
-
-    // Sort by inventory count (highest first)
-    filtered.sort((a, b) => b.inv - a.inv);
-
-    document.getElementById('count').innerText = filtered.length;
-    const grid = document.getElementById('grid');
-    grid.innerHTML = filtered.map(p => {
-        const isEligible = p.d.includes('Throwing Shade');
-        const cleanDesc = p.d.replace('Throwing Shade', '').trim();
-        const invTagHtml = p.inv > 0 
-            ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
-            : `<span class="tag inv-out">❌ Out of stock</span>`;
-
-        return `
-        <div class="card">
-            <div class="card-inner">
-                <p class="common-name">${p.c}</p>
-                <span class="sci-name">${p.s}</span>
-                <div class="tags">
-                    ${invTagHtml}
-                    <span class="tag">${p.cat}</span>
-                    <span class="tag">${p.l}</span>
-                    <span class="tag">${p.m}</span>
-                    <span class="tag">Height: ${p.h}</span>
+            return `
+            <div class="card">
+                <div class="card-inner">
+                    <p class="common-name">${p.c}</p>
+                    <span class="sci-name">${p.s}</span>
+                    <div class="tags">
+                        ${invTagHtml}
+                        <span class="tag">${p.cat}</span>
+                        <span class="tag">${p.l}</span>
+                        <span class="tag">${p.m}</span>
+                        ${p.h ? `<span class="tag">Height: ${p.h}</span>` : ''}
+                    </div>
+                    <p class="desc">${cleanDesc}</p>
                 </div>
-                <p class="desc">${cleanDesc}</p>
-            </div>
-            ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
-        </div>`
-    }).join('');
-}
+                ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
+            </div>`
+        }).join('');
+    }
 
-    // 4. Setup dropdown filters dynamically based on the dataset
+    // 6. Setup Dropdowns dynamically
     function init() {
         const cats = new Set(), lights = new Set(), moists = new Set();
         
         plantData.forEach(p => {
             cats.add(p.cat);
-            // Split complex ranges (e.g. "Wet to Medium-Wet") so users can filter by base words
-            p.l.split(/,|to/).forEach(v => lights.add(v.trim()));
-            p.m.split(/,|to|-/).forEach(v => moists.add(v.trim()));
+            p.l.split(/,|to|-/).forEach(v => { if (v.trim()) lights.add(v.trim()) });
+            p.m.split(/,|to|-/).forEach(v => { if (v.trim()) moists.add(v.trim()) });
         });
 
         const populate = (id, set) => {
             const el = document.getElementById(id);
-            Array.from(set).filter(Boolean).sort().forEach(val => {
+            Array.from(set).sort().forEach(val => {
                 el.innerHTML += `<option value="${val}">${val}</option>`;
             });
         };
@@ -228,7 +265,8 @@ function update() {
         update();
     }
 
-    init();
+    // Start the process
+    loadDatabases();
 </script>
 </body>
 </html>
