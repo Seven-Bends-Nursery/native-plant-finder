@@ -4,21 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virginia Native Plant Finder & Inventory</title>
-    
     <style>
         :root { --dark-green: #1b3022; --leaf: #4a6741; --bg: #f9fbf9; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 1250px; margin: 0 auto; }
         header { background: var(--dark-green); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
-        
         .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
                     display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
                     margin-bottom: 25px; position: sticky; top: 10px; z-index: 1000; border: 1px solid #ddd; }
         .group { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
         label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark-green); }
         select, input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
-        
-        /* Toggle Switch for Inventory */
         .toggle-container { display: flex; align-items: center; gap: 10px; min-width: 150px; padding-bottom: 10px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -27,16 +23,15 @@
         input:checked + .slider { background-color: var(--leaf); }
         input:checked + .slider:before { transform: translateX(26px); }
         .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
-
         .stats { font-weight: bold; margin-bottom: 15px; color: var(--leaf); font-size: 1.1rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.2s; }
+        .card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
         .card-inner { padding: 18px; flex-grow: 1; }
         .common-name { font-size: 1.25rem; font-weight: bold; color: var(--dark-green); margin: 0; }
         .sci-name { font-style: italic; color: #666; font-size: 0.85rem; margin-bottom: 15px; display: block; }
-        .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-        .tag { background: #f0f4ef; color: var(--leaf); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .tag { background: #f0f4ef; color: var(--leaf); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
         .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.85rem; }
         .inv-out { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
         .promo { background: #fff8e1; color: #856404; padding: 10px; font-size: 0.75rem; text-align: center; font-weight: bold; border-top: 1px solid #ffeeba; }
@@ -53,7 +48,6 @@
         <div class="group"><label>Category</label><select id="fCat"><option value="all">All Categories</option></select></div>
         <div class="group"><label>Light Requirement</label><select id="fLight"><option value="all">Any Light</option></select></div>
         <div class="group"><label>Moisture Need</label><select id="fMoist"><option value="all">Any Moisture</option></select></div>
-        
         <div class="toggle-container">
             <label class="switch">
                 <input type="checkbox" id="fStock" checked>
@@ -67,15 +61,14 @@
 </div>
 
 <script>
-    let plantData = [];
-    let inventoryMap = {};
+    // Variable names have been updated to prevent cache conflicts
+    let appPlantData = [];
+    let appInventoryMap = {};
 
-    // 1. Fetch both CSV files simultaneously
     async function loadDatabases() {
         try {
             const [spinfoRes, squareRes] = await Promise.all([
                 fetch('Spinfo_20260521.csv'),
-                // Update this filename if your export is named something else!
                 fetch('SquareExport_catalog-2026-07-09.csv') 
             ]);
 
@@ -92,11 +85,10 @@
             document.getElementById('statusMessage').innerHTML = 'Showing <span id="count">0</span> plants';
         } catch (error) {
             console.error("Error loading files:", error);
-            document.getElementById('statusMessage').innerText = "Error loading databases. Please ensure both CSV files are uploaded to your server.";
+            document.getElementById('statusMessage').innerText = "Error loading databases. Please ensure both CSV files are uploaded to GitHub.";
         }
     }
 
-    // 2. A robust, reusable CSV parser
     function parseCSV(str) {
         const arr = [];
         let quote = false;
@@ -118,14 +110,13 @@
         return arr;
     }
 
-    // 3. Process the Square Inventory CSV
     function processInventory(csvText) {
         const data = parseCSV(csvText);
         if (data.length < 2) return;
 
+        // Strip invisible BOM characters and quotes that break the mapping
         const headers = data[0].map(h => h.trim().replace(/^\uFEFF/, '').replace(/"/g, ''));
         
-        // Find the correct column numbers regardless of exact formatting
         const nameIdx = headers.findIndex(h => h === 'Item.Name' || h === 'Item Name');
         const qtyIdx = headers.findIndex(h => h.includes('Current Quantity') || h.includes('Current.Quantity'));
 
@@ -141,21 +132,19 @@
             let qty = parseInt(data[i][qtyIdx].trim(), 10) || 0;
 
             if (itemName) {
-                // Extract just the scientific name (everything before the parenthesis)
                 let sciName = itemName.split('(')[0].trim().toLowerCase();
-                // Tally inventory (handles multiple pot sizes of the same species)
-                inventoryMap[sciName] = (inventoryMap[sciName] || 0) + qty;
+                appInventoryMap[sciName] = (appInventoryMap[sciName] || 0) + qty;
             }
         }
     }
 
-    // 4. Process the Main Plant Database
     function processSpinfo(csvText) {
         const data = parseCSV(csvText);
+        // Strip invisible BOM characters and quotes
         const headers = data[0].map(h => h.trim().replace(/^\uFEFF/, '').replace(/"/g, ''));
         const nonPlantCategories = ['Books', 'Services', 'Gift Card', 'Stickers', 'Supplies', 'Blank'];
         
-        plantData = [];
+        appPlantData = [];
         
         for (let i = 1; i < data.length; i++) {
             if (data[i].length < 5) continue; 
@@ -165,14 +154,12 @@
                 obj[h] = data[i][index] ? data[i][index].trim() : '';
             });
 
-            // Filter out non-plant rows
             if (!obj['Category'] || nonPlantCategories.includes(obj['Category'])) continue;
 
-            // Map the inventory count from the inventoryMap
             let sciNameLower = (obj['Scientific Name'] || '').trim().toLowerCase();
-            let currentInv = inventoryMap[sciNameLower] || 0;
+            let currentInv = appInventoryMap[sciNameLower] || 0;
 
-            plantData.push({
+            appPlantData.push({
                 cat: obj['Category'].replace('_MF', ''),
                 s: obj['Scientific Name'],
                 c: obj['Common Name'],
@@ -184,89 +171,18 @@
             });
         }
         
-        init(); // Populate dropdowns once parsing is finished
+        init(); 
     }
 
-    // 5. Update UI Based on User Filters
-    function update() {
+    function updateFilters() {
         const s = document.getElementById('search').value.toLowerCase();
         const c = document.getElementById('fCat').value;
         const l = document.getElementById('fLight').value;
         const m = document.getElementById('fMoist').value;
         const inStock = document.getElementById('fStock').checked;
 
-        const filtered = plantData.filter(p => {
+        const filtered = appPlantData.filter(p => {
             const matchesSearch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
             const matchesCat = c === 'all' || p.cat === c;
             const matchesLight = l === 'all' || p.l.includes(l);
-            const matchesMoist = m === 'all' || p.m.includes(m);
-            const matchesStock = !inStock || p.inv > 0;
-            return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesStock;
-        });
-
-        // Sort by highest inventory first, then alphabetically
-        filtered.sort((a, b) => {
-            if (b.inv !== a.inv) return b.inv - a.inv;
-            return a.c.localeCompare(b.c);
-        });
-
-        const countSpan = document.getElementById('count');
-        if(countSpan) countSpan.innerText = filtered.length;
-
-        const grid = document.getElementById('grid');
-        grid.innerHTML = filtered.map(p => {
-            const isEligible = p.d.includes('Throwing Shade');
-            const cleanDesc = p.d.replace('Throwing Shade', '').trim();
-            const invTagHtml = p.inv > 0 
-                ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
-                : `<span class="tag inv-out">❌ Out of stock</span>`;
-
-            return `
-            <div class="card">
-                <div class="card-inner">
-                    <p class="common-name">${p.c}</p>
-                    <span class="sci-name">${p.s}</span>
-                    <div class="tags">
-                        ${invTagHtml}
-                        <span class="tag">${p.cat}</span>
-                        <span class="tag">${p.l}</span>
-                        <span class="tag">${p.m}</span>
-                        ${p.h ? `<span class="tag">Height: ${p.h}</span>` : ''}
-                    </div>
-                    <p class="desc">${cleanDesc}</p>
-                </div>
-                ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
-            </div>`
-        }).join('');
-    }
-
-    // 6. Setup Dropdowns dynamically
-    function init() {
-        const cats = new Set(), lights = new Set(), moists = new Set();
-        
-        plantData.forEach(p => {
-            cats.add(p.cat);
-            p.l.split(/,|to|-/).forEach(v => { if (v.trim()) lights.add(v.trim()) });
-            p.m.split(/,|to|-/).forEach(v => { if (v.trim()) moists.add(v.trim()) });
-        });
-
-        const populate = (id, set) => {
-            const el = document.getElementById(id);
-            Array.from(set).sort().forEach(val => {
-                el.innerHTML += `<option value="${val}">${val}</option>`;
-            });
-        };
-
-        populate('fCat', cats);
-        populate('fLight', lights);
-        populate('fMoist', moists);
-
-        document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
-        update();
-    }
-
-    // Start the process
-    loadDatabases();
-</script>
-</body>
-</html>
+            const matchesMoist
