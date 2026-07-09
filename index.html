@@ -185,4 +185,72 @@
             const matchesSearch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
             const matchesCat = c === 'all' || p.cat === c;
             const matchesLight = l === 'all' || p.l.includes(l);
-            const matchesMoist
+            const matchesMoist = m === 'all' || p.m.includes(m);
+            const matchesStock = !inStock || p.inv > 0;
+            return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesStock;
+        });
+
+        // Sort by inventory first, then alphabetically
+        filtered.sort((a, b) => {
+            if (b.inv !== a.inv) return b.inv - a.inv;
+            return a.c.localeCompare(b.c);
+        });
+
+        const countSpan = document.getElementById('count');
+        if(countSpan) countSpan.innerText = filtered.length;
+
+        const grid = document.getElementById('grid');
+        grid.innerHTML = filtered.map(p => {
+            const isEligible = p.d.includes('Throwing Shade');
+            const cleanDesc = p.d.replace('Throwing Shade', '').trim();
+            const invTagHtml = p.inv > 0 
+                ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
+                : `<span class="tag inv-out">❌ Out of stock</span>`;
+
+            return `
+            <div class="card">
+                <div class="card-inner">
+                    <p class="common-name">${p.c}</p>
+                    <span class="sci-name">${p.s}</span>
+                    <div class="tags">
+                        ${invTagHtml}
+                        <span class="tag">${p.cat}</span>
+                        <span class="tag">${p.l}</span>
+                        <span class="tag">${p.m}</span>
+                        ${p.h ? `<span class="tag">Height: ${p.h}</span>` : ''}
+                    </div>
+                    <p class="desc">${cleanDesc}</p>
+                </div>
+                ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
+            </div>`
+        }).join('');
+    }
+
+    function init() {
+        const cats = new Set(), lights = new Set(), moists = new Set();
+        
+        appPlantData.forEach(p => {
+            cats.add(p.cat);
+            p.l.split(/,|to|-/).forEach(v => { if (v.trim()) lights.add(v.trim()) });
+            p.m.split(/,|to|-/).forEach(v => { if (v.trim()) moists.add(v.trim()) });
+        });
+
+        const populate = (id, set) => {
+            const el = document.getElementById(id);
+            Array.from(set).sort().forEach(val => {
+                el.innerHTML += `<option value="${val}">${val}</option>`;
+            });
+        };
+
+        populate('fCat', cats);
+        populate('fLight', lights);
+        populate('fMoist', moists);
+
+        document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateFilters));
+        updateFilters();
+    }
+
+    loadDatabases();
+</script>
+</body>
+</html>
