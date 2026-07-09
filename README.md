@@ -17,6 +17,11 @@
 
 ##### NEXT STEPS #####
 
+#Update files here:
+Lines 77-79
+fetch('Spinfo_20260521.csv'),
+                // Update this filename if your export is named something else!
+                fetch('SquareExport_catalog-2026-07-09.csv') 
 
 ############################
 
