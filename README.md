@@ -25,4 +25,12 @@ fetch('Spinfo_20260521.csv'),
 
 ############################
 
+Add the Test Code
+
+Open your index.html file in GitHub and click the pencil icon to edit it. Scroll all the way down to where the <script> tag starts, and add a single alert line right below it, like this:
+HTML
+
+<script>
+    alert("The new code is definitely running!");
+
 ############################
