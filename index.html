@@ -26,359 +26,116 @@
         .tag { background: #f0f4ef; color: var(--leaf); padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
         .desc { font-size: 0.9rem; line-height: 1.5; color: #555; }
         .promo { background: #fff8e1; color: #856404; padding: 10px; font-size: 0.75rem; text-align: center; font-weight: bold; border-top: 1px solid #ffeeba; }
+    /* Toggle Switch & Inventory Tags */
+        .toggle-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; min-width: 150px; }
+        .toggle-group input { width: 18px; height: 18px; cursor: pointer; }
+        .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
+        .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.8rem; }
+        .inv-out { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>Plant Ridge & Valley Natives</h1>
-        <p>Complete Interactive Database for Virginia's Ridge & Valley Region</p>
+        <h1>Seven Bends Nursery</h1>
+        <p>Interactive Database for Native Plant Inventory</p>
     </header>
     <div class="controls">
         <div class="group"><label>Search Plants</label><input type="text" id="search" placeholder="Name or keyword..."></div>
         <div class="group"><label>Category</label><select id="fCat"><option value="all">All Categories</option></select></div>
         <div class="group"><label>Light Requirement</label><select id="fLight"><option value="all">Any Light</option></select></div>
         <div class="group"><label>Moisture Need</label><select id="fMoist"><option value="all">Any Moisture</option></select></div>
+   <div class="group toggle-group">
+            <input type="checkbox" id="fStock" checked>
+            <label for="fStock" class="toggle-label">In Stock Only</label>
+        </div>
     </div>
     <div class="stats">Showing <span id="count">0</span> plants</div>
     <div id="grid" class="grid"></div>
 </div>
 
-<script type="text/plain" id="database">
-Fern|Adiantum pedatum|Maidenhair Fern|Part-Full Shade|Moist|0.5' - 2'|Deciduous perennial fern with bright green fronds and black stems spreads in a circular pattern. Will do well in shady woodlands, beds, and rain gardens.
-Fern|Athyrium filix-femina|Lady Fern|Full Shade|Moist|1' - 3'|Tolerates drier soils than many ferns, but will only tolerate sun if the soil is kept moist. Divide clumps in spring every few years to help spread! Loves shady places!
-Fern|Dennstaedtia punctilobula|Hay Scented Fern|Part-Full Shade|Moist|1' - 2'|Crushed leaves release a hay-like scent, giving this fern its name. Fronds turn yellow in the fall. Tolerates dry or poor soils well once established.
-Fern|Dryopteris felix-mas|Male Fern|Part-Full Shade|Wet|1' - 3'|Large arching deciduous male fern. Erect stout rhizomes and medium green blades. Pinnate-pinnatifid with 20-30 pair of long-pointed pinnae per blade. Leaflet divided into short, rounded, sub-leaflets.
-Fern|Dryopteris marginalis|Marginal Woodfern|Part-Full Shade|Moist|1' - 3'|Evergreen, perennial fern. Marginal references the location of the sori on the underside of the pinnae. Grows in a broad, erect crown that is densely covered with light brown scales. Produces a large, single crown and does not spread.
-Fern|Matteuccia struthiopteris|Ostrich Fern|Part-Full Shade|Moist|1' - 5'|Tall bright green plumes turn bronze-gold in fall. In optimal moist conditions will spread to form dense colonies. Deer and rabbit resistant.
-Fern|Onoclea sensibilis|Sensitive Fern|Full Shade|Moist|1' - 2'|Light green fronds with deep cut lobes are sensitive to first frost in fall. Decorative beaded stalks remain upright in winter. Pale red fiddleheads appear in spring. Rabbit and deer resistant.
-Fern|Osmunda cinnamomea|Cinnamon Fern|Part-Full Shade|Moist|2' - 3'|Cinnamon colored fibers near the frond bases give this fern its name. With constant moisture, this shade-loving plant can reach larger sizes.
-Fern|Osmunda claytoniana|Interrupted Fern|Full Shade|Moist|0.5' - 3'|Large vase shaped blueish green fern turns golden yellow in the fall. Silvery-white fiddleheads emerge in spring.
-Fern|Osmunda spectabilis|Royal Fern|Full Shade|Moist|2' - 5'|Tall fern that typically occurs in clumps. Broad fronds with well seperated pinnae. Turns yellow in fall. Naturally occurs on moist bluffs and on ledges along streams.
-Fern|Parathelypteris noveboracensis|New York Fern|Full Shade|Moist|1' - 2'|Clumps usually have 3 or more fronds. Wispy texture due to double cut pinnae. Brown at the base, green once it reaches leaflets. Can form spreading colonies with black trailing rhizomes. Common in woodlands and wetlands.
-Fern|Polystichum acrostichoides|Christmas Fern|Full Shade|Moist|1' - 2'|Evergreen fern provides winter color in a landscape. Deer, drought tolerant.
-Fern|Woodwardia areolata|Netted Chain Fern|Full Shade|Moist|0.5' - 2'|Can take considerable sun if the soil is kept wet, but loves shade. Spreads to make colonies in good growing conditions.
-Flower|Achillea millefolium|Yarrow|Full Sun|Dry|2' - 3'|This spreading, mat-forming plant can naturalize an area. Fern-like leaves and upright branches lead to bright white-to-pink flowers in late summer. Tolerates poor soils and drought. Deer Resistant.
-Flower|Acorus americanus|Sweet Flag|Part-Full Shade|Wet|2' - 3'|Flowering with grassy leaves; Ideal for rain gardens and a vigorous spreader.
-Flower|Actaea pachypoda|Dolls Eyes|Part-Full Shade|Moist|1' - 3'|Blooms small white flowers in clusters during spring. White berries appear in summer which gives the plant its common name as they resemble doll eyes. Fruits are eaten by a variety of birds. Plant spreads through rhizomes.
-Flower|Actaea racemosa|Black Cohosh|Full Shade|Moist|3' - 6'|Spears of small, white flowers bloom in early summer and rise well above the rest of the foliage. The plant is known for its odorless insect-repelling properties.
-Flower|Agalinis purpurea|Purple False Foxglove|Full to Partial|Wet to Medium|1' - 4'|Annual that readily reseeds itself in a garden. Blooms lovely pink tubular flowers. Attracts bees.
-Flower|Agastache nepetoides|Yellow Giant Hyssop|Part-Full Sun|Medium|4' - 6'|Fast growing perennial that produces long lasting whorls of tiny greenish-yellow flowers. Has large toothed arrow shaped leaves. Attracts bees and butterflies. Heat and humidity tolerant.
-Flower|Agastache scrophulariifolia|Giant Purple Hyssop|Part-Full Sun|Medium|2' - 5'|Lavender flowers bloom in late summer upon tall spikes, and are a great attractor for bees and butterflies. The strong structure of the flower spikes lets them stay upright through the winter, creating interest in the yard.
-Flower|Ageratina altissima|White Snakeroot|Partial to Shade|Medium-Wet to Medium-Dry|2' - 5'|Tallest aster in its genus. Booms long lasting white flowers. Attracts butterflies, bees and songbirds.
-Flower|Allium cernuum|Nodding Onion|Part-Full Shade|Dry|1.5' - 1.5'|Narrow, grass-like leaves lead to small pink flowers the appear in clusters in the summer. Smells of onion when cut. Deer and drought tolerant.
-Flower|Allium tricoccum|Ramp|Full Shade|Moist|0.5' - 0.5'|Rare delicacies, clipping leaves can add great garlic-like flavor to cooking.
-Flower|Amorpha canescens|Leadplant|Full Sun|Dry|2' - 3'|Deep spires of rich, purple flowers bloom in summer attract butterflies and birds. Does well in sandy, poor soils. Drought tolerant.
-Flower|Amsonia tabernaemontana|Bluestar|Part-Full Sun|Medium|2' - 3'|Easy to grow plant with a variety of uses. An upright, clump-forming plant with light blue, star-like flowers in late spring. Drought Tolerant. Deer tolerant. Tolerates clay soil.
-Flower|Anaphalis margaritacea|Pearly Everlasting|Full Sun|Moist|1' - 3'|Herbaceous perennial or biennial. Long-lasting, yellowish-white flowers bloom in late summer. Hairy, soft grey stem. Tolerates frost, most soils, and light shade. Dioecious. Dried stalks are perfect for floral arrangements.
-Flower|Anemone canadensis|Canada Anemone|Part-Full Sun|Moist|1' - 2'|Small white flowering plant that forms impressive large colonies through rhizomes.
-Flower|Anemone virginiana|Tall Anemone|Part-Full Shade|Moist|2' - 4'|Occurring in dry, rocky terrain, this perennial can also thrive in moist, humusly soils. In the spring, 1 five pointed white flowers bloom around a central mound of stamens. Deer, drought, shade tolerant.
-Flower|Antennaria neglecta|Field Pussytoes|Part-Full Sun|Dry|0.5' - 1'|Small mat forming perennial. Wholly stems, leaves and flower heads. White disk like flowers rise on stalk from basal rosette in spring. Dioecious plant. Females produce seed-like achenes. Attracts butterflies.
-Flower|Antennaria parlinii|Parlin's Pussytoes|Part-Full Sun|Medium|0.5' - 1'|Small mat forming perennial that blooms fuzzy white flower heads in spring. Larger blooms compared to other species of pussytoes. Drought and rocky soil tolerant. Attracts butterflies.
-Flower|Antennaria plantaginifolia|Pussytoes|Part-Full Sun|Medium|1' - 1'|Soft, gray foliage. Fuzzy, whitish flower heads with pink bloom in the spring. Can spread to form colonies. Drought and rocky soil Tolerant. Attracts butterflies.
-Flower|Aplectrum hyemale|Adam and Eve Orchid|Part-Full Shade|Moist|1' - 2'|Single leaf from late November to March. Leaves are pin-striped, with alternating silvery-white and green stripes. Late May to early June, flower stalk emerges with flowers
-Flower|Aquilegia canadensis|Eastern Columbine|Part-Full Shade|Dry|2' - 3'|Beautiful, red-and-yellow, bell-shaped hanging flowers bloom in spring and attract hummingbirds. Deer and drought tolerant.
-Flower|Aralia racemosa|Spikenard|Partial to Shade|Medium-Wet to Medium|3' - 5'|Thicket forming herbacous perennial grows in a shrub like stature. Dark maroon stem rises above plant blooming green-white flowers that mature to red fruits in fall. Attracts native bees and birds.
-Flower|Arisaema triphyllum|Jack in the Pulpit|Full Shade|Moist|1' - 2'|A green and brown hood conceals a jack covered in purple flowers in late spring. Flower becomes bright red berries in late summer that feed wildlife. Unique, easy to care for.
-Flower|Aruncus dioicus|Goatsbeard|Part-Full Shade|Moist|4' - 6'|Tall, erect bush found in moist woodlands. Plumes of tiny white flowers rise above the foliage in Spring.
-Flower|Asarum canadense|Wild Ginger|Full Shade|Moist|0.5' - 0.5'|Cup-shaped, purple flowers appear in spring grow close to the ground. Great for use as ground cover in shady areas. Deer Tolerant.
-Flower|Asclepias exaltata|Poke Milkweed|Full-Part Sun|Moist|2' - 7'|Perennial wildflower plant in the dogbane family. Species get their name from the Latin word exaltata, meaning lofty, due to the species tall stature. Requires moist, acid-to-neutral pH soil with high organic content. Great plant for the boarders of a pollinator garden
-Flower|Asclepias incarnata|Rose Milkweed|Full Sun|Moist|4' - 5'|Small, fragrant pink flowers appear in tight clusters at end of summer. Surprisingly tolerant of average soil. Butterfly attractant and supports Monarchs. Deer, Clay, and Wet Soil Tolerant.
-Flower|Asclepias purpurascens|Purple Milkweed|Full to Partial|Medium-Wet to Medium-Dry|2' - 3'|Tall milkweed that blooms deep purple and rose pink flowers. Spreads vigorously through seeds and rhizomes. Best for naturalized areas. Drought and deer resistant. Attracts bees and butterflies.
-Flower|Asclepias syriaca|Common Milkweed|Full Sun|Dry|4' - 6'|Milkweed, which native pollinators love, is critically important for monarch butterflies and will vigorously spread to fill a garden.
-Flower|Asclepias tuberosa|Butterfly Weed Milkweed|Full Sun|Very dry|1' - 2'|Iconic bright, orange flowers are important for monarch butterflies and caterpillars and other pollinators. Drought tolerant.
-Flower|Asclepias verticillata|Whorled Milkweed|Part-Full Shade|Moist|1' - 2'|Whitish, fragrant flowers bloom in small clusters between June and September. Simple, unbranched stems with long, narrow leaves. Drought and deer tolerant. Attracts butterflies and hummingbirds.
-Flower|Aster puniceus|Purplestem Aster|Part-Full Sun|Moist|3' - 6'|Stiff, reddish stems branch into large flower heads. Lavender flowers bloom late in summer. Can spread to form colonies. Attracts butterflies, does well in wet, boggy soils.
-Flower|Baptisia australis|False Blue Indigo|Part-Full Sun|Dry|3' - 4'|Naturally found in forests along streambanks. Loved for its purple flowers and black seed pods. Perfect for garden or water edges!
-Flower|Baptisia tinctoria|Yellow Wild Indigo|Part-Full Sun|Dry|2' - 3'|Upright, smooth, shrubby perennial. Blooms clusters of small yellow to cream pea-like flowers on terminal racemes from late spring to early summer.
-Flower|Blephilia ciliata|Downy Wood Mint|Part-Full Sun|Dry|1' - 2'|Blue-purple flowers emerge in late spring on this pleasant smelling native. Drought tolerant and does well in a wide variety of garden settings.
-Flower|Blephilia hirsuta|Hairy Wood Mint|Part-Full Sun|Medium|1' - 2'|Blue-purple flowers appear late in spring to mid-summer in tiered clusters. Fragrant Leaves.
-Flower|Caltha palustris|Marsh Marigold|Part-Full Sun|Wet|1' - 2'|Grows well on the edges of ponds and bogs, and can spread rhizomously. Flowers with bright yellow 1-2 blooms in late spring to early summer. Tolerates deer, wet soil.
-Flower|Campanula americana|Tall Bellflower|Partial to Shade|Medium-Wet to Medium-Dry|3' - 5'|Erect biennial wildflower that blooms dark violet star shaped flowers off a single central stem. Readily reseeds. A pollinator magnet that attracts butterflies, bees and hummingbirds!
-Flower|Campanula rotundifolia|Harebell|Full to Partial|Medium-Dry to Dry|1' - 2'|Rosette forming, upright perennial that readily reseeds and spreads. Blooms delightful purple bell-shaped flowers.
-Flower|Chamaecrista fasciculata|Partridge Pea|Full Sun|Dry|1' - 3'|Showy, 1 yellow flowers bloom in late summer in small clusters. Flowers will close when touched. Seed pods mature from green to brown and are eaten by birds. Drought tolerant.
-Flower|Chelone glabra|White Turtlehead|Part-Full Sun|Moist|2' - 3'|Clump forming perennial that blooms late summer to fall. White two-lipped flowers with a tinge of pink on spike like terminal racemes. Lance-shaped dark green leaves. Attracts pollinators and hummingbirds.
-Flower|Chelone lyonii|Pink Turtlehead|Part-Full Sun|Moist|2' - 4'|Upright, rhizome perennial. Hooded pink flowers (1 long) bloom in spikes in late summer and fall. Attracts butterflies. Deer and wet-soil tolerant.
-Flower|Chrysopsis mariana|Maryland Golden Aster|Full to Partial|Medium to Medium Moist|1' - 2'|Short lived perennial aster that readily reseeds itself. Produces long blooming bright yellow daisy-like flowers. Drought resistant. Attracts butterflies and bees.
-Flower|Conoclinium coelestinum|Mistflower|Part-Full Sun|Moist|1.5' - 4'|Can spread aggressively by rhizomes. Purplish stems with showy, fluffy, tubular, blue-purple flowers in late summer to early fall. Attracts butterflies.
-Flower|Coreopsis lanceolata|Lanceleaf Coreopsis|Part-Full Sun|Dry|1' - 3'|Showy yellow flowers in this drought tolerant, easy to grow plant. Spreads quickly to fill a space.
-Flower|Coreopsis tripteris|Tall Coreopsis|Full Sun|Dry|2' - 8'|Tall, upright, multi-branching plant with 2 yellow flowers that bloom in late summer and fall attract butterflies and make excellent cuttings! Deer Tolerant and Drought Tolerant.
-Flower|Coreopsis verticillata|Threadleaf Coreopsis|Full Sun|Dry|2' - 3'|Thrives in poor, rocky, dry soils! Bright yellow flowers bloom in summer. Deer and Drought Resistant.
-Flower|Corydalis sempervirens|Pale Corydalis|Part-Full Sun|Dry|2' - 3'|Distinct, pale, multi-lobed leaves distinguish the growth of this perennial until early summer, when it shoots up stems of delicate, 1/2 inch pink-and-yellow flowers. Biennial but will self-seed to colonize.
-Flower|Delphinium exaltatum|Tall Larkspur|Full Sun|Medium|4' - 6'|Tall spikes of 1 blue flowers bloom in summer, attracting butterflies. Grows taller and blooms later than many other larkspurs. Remove spent flowers to encourage new blooms. Deer tolerant.
-Flower|Dicentra cucullaria|Dutchmans breeches|Part-Full Shade|Moist|0.5' - 0.5'|In Spring basal fern-like leaves appear with a leafless arching stem of fragrant white pantaloon-shaped flowers. Adds early interest to the garden. Plant goes dormant by summer.
-Flower|Dodecatheon amethystinum|Amethyst Shooting Star|Full-Part Sun|Medium|0.5' - 2.5'|Fom April to May this spectacular flower produce fragrant purple to pink colored blossoms. Rare to find in the wild. Naturally found in very limited native range including a small area of the Appalachians. Fruit is an erect, oval to cylindric capsule and mature in late summer.
-Flower|Dodecatheon meadia|Midland Shooting Star|Full to Partial|Medium-Wet to Medium-Dry|1' - 2'|Herbaceous perennial that forms basal rosettes. In spring a tall red or green stem rises above the basal rosette and blooms unique pink or white flowers that resemble the shape of a shooting star.
-Flower|Erigeron pulchellus|Robin's Plantain|Part-Full Sun|Dry|1' - 2'|White, aster-like flowers bloom in late spring on sparsley-leaved stems. Tolerates drought and clay soil. Attracts butterflies.
-Flower|Eryngium yuccifolium|Rattlesnake Master|Full Sun|Dry|4' - 5'|Long, sword-like leaves with domed flower clusters. Whitish flower heads appear in summer, Drought, clay, rocky-soil tolerant.
-Flower|Erythronium americanum|Yellow Trout Lily|Part-Full Shade|Moist|0.5' - 0.5'|Spring ephemeral. Blooms a single beautiful, delicate yellow flower on a stalk. At least two leaves at its base. Forms colonies. Can take 4 to 5 years to bloom. Support Miner Bees.
-Flower|Eupatorium hyssopifolium|Hyssop-Leaved Boneset|Part-Full Sun|Dry|2' - 4'|Dense white flower clusters emerge in the summer. Does well in dry meadows and gravelly soil. Attracts butterflies and native bees.
-Flower|Eupatorium perfoliatum|Common Boneset|Full Sun|Moist|4' - 6'|White flowers with grassy leaves, and a vigorous spreader. Ideal for rain gardens.
-Flower|Eupatorium purpureum|Sweet Joe Pye Weed|Part-Full Sun|Moist|5' - 7'|Large plants with purple blossoms can be showy additions to a garden. Attracts butterflies, birds, and pollinators. Deer resistant.
-Flower|Eupatorium serotinum|Late Boneset|Full Sun|Medium|3' - 6'|Clusters of small white flowers attract pollinators in late summer and fall that attract a variety of pollinators. Can form colonies through rhizomes.
-Flower|Eurybia macrophylla|Big Leaved Aster|Part-Full Shade|Moist|2' - 4'|Large, 4-8 leaves give this plant its name, and is often used for its foliage rather than its flowering, especially if grown in shade. Pale blue flowers with yellow centers bloom in late summer, especially in partial shade.
-Flower|Eurybia spectabilis|Showy Aster|Part-Full Sun|Dry|1' - 2'|Flowers, up to 2 wide, bloom for a long time in late summer and fall. Attracts butterflies and bees. Can form small colonies from underground rhizomes.
-Flower|Euthamia graminifolia|Grass leaved Goldenrod|Full-Part Sun|Moist|2' - 4'|A goldenrod with grass-like leaves and soft yellow flowers. Flowers have a long bloom season from late summer to early winter and are favored by our native bees. Spreads by rhizomes to form attractive clumps.
-Flower|Eutrochium fistulosum|Hollow Joe Pye Weed|Part-Full Sun|Moist|4' - 7'|Erect, clump-forming flower with a long bloom. Large, fragrant,pink rounded clusters of flowers. Great planting for attracting bees and butterflies!
-Flower|Eutrochium maculatum|Joe Pye Weed|Full to Partial|Wet to Medium-Wet|4' - 7'|Tall herbaceous perennial that bloom dusky pink flowers. Fragrant and showy. Can form small colonies that can be divided in spring. Drought and deer resistant. Attracts butterflies.
-Flower|Filipendula rubra|Queen of the prairie|Part-Full Sun|Moist|6' - 8'|Very tall, upright, clump-forming perennial, wide panicles of tiny, fragrant, pale pink flowers in early to mid summer. Bright green fragrant leaves.Valued for both its leaves and its flowers.
-Flower|Fragaria virginiana|Wild Strawberry|Full-part Sun|Medium|0.5' - 1'|Herbaceous, flowering, perennial. Spread by runners making it a great option for ground cover. Produce large colonies over time. White flowers in spring make way for bright red edible fruits. Most productive in color temperatures of spring and fall.
-Flower|Gentianella quinquefolia|Stiff Gentian|Full to Partial|Medium-Wet to Medium-Dry|0.5' - 2'|Biennial wildflower that in its second year produces purple funnel-shaped flowers. Attracts native bees.
-Flower|Geranium maculatum|Wild Geranium|Part-Full Shade|Medium|1' - 2'|Bright saucer-shaped purple flowers bloom in spring. Can naturalize and spread in optimal growing conditions, so can be used as a ground cover.
-Flower|Goodyera pubescens|Downy Rattlesnake Plantain|Part-Full Shade|Moist|0.5' - 1.5'|Evergreen herbaceous perennial in the orchid family. Leaf markings resemble the skin of rattlesnakes. Flower stalks are covered with down. Blooms racemes of white flowers. May take several years before blooming. Pollinated by bees.
-Flower|Helenium autumnale|Autumn Helenium|Full Sun|Moist|3' - 5'|Upright perennial that loves watery landscape. 2 yellow flowers with wedge-shaped petals bloom in late summer. Deer Resistant. Tolerates Clay.
-Flower|Helianthus angustifolius|Narrow-Leaf Sunflower|Part-Full Shade|Moist|5' - 7'|Big (2-3'), numerous yellow flowerheads bloom in Fall and continue to frost, where seeds feed wildlife. Great cut flowers! Attracts butterflies and birds. Deer resistant.
-Flower|Heliopsis helianthoides|False Oxeye Sunflower|Part-Full Shade|Dry|3' - 5'|This small sunflower relative provides pollinators with cheery yellow blooms in late summer.
-Flower|Hepatica nobilis acuta|Sharp lobed hepatica|Part-Full Shade|Moist|0.5' - 1'|Pink, white or purple blossoms in early spring. Fuzzy stems. Leaves grow from ground level and appear after the flowers have bloomed. Evergreen until following spring.
-Flower|Heuchera americana|American Alum Root|Part-Full Shade|Moist|1' - 3'|Small, mounding herbaceous perennial. Known for their colorful leaves that can be green or variegated in shades of purple, bronze or cream. Bell shaped flowers emerge in the spring on leafless stalks above the foliage.
-Flower|Heuchera villosa|Hairy Alumroot|Part-Full Shade|Moist|1' - 3'|Hairy, three-lobed green leaves with a velvety texture and hairy, brown flowering stems. Late summer blooms of whitish flowers.
-Flower|Hexastylis arifolia|Little Brown Jug|Full Shade|Medium|2' - 6'|Clump forming. Evergreen perennial. When exposed to cold weather green leaves may turn a purple hue. Named after its brownish-red jug shaped flowers that bloom from March to June. Likes shade but does best in dappled shade.
-Flower|Hibiscus laevis|Halberdleaf Rose-mallow|Full Sun|Wet|3' - 7'|Large 4-6 diameter white flowers emerge in July. Attracts butterflies
-Flower|Hibiscus moscheutos|Swamp Rose Mallow|Full Sun|Wet|3' - 7'|Large 4-6 diameter white flowers emerge from July to December. Attracts butterflies
-Flower|Hypercium hypercoides|St Andrew's Cross|Part-Full Shade|Medium|1' - 3'|This perennial sub-shrub likes acidic soils. Bright, yellow, four-petaled flowers form a cross and bloom in summer. Drought Tolerant
-Flower|Impatiens capensis|Jewelweed|Part-Full Shade|Wet|2' - 5'|These annuals can spread well through self seeding. Bright orange flowers attract hummingbirds and butterflies when they bloom through the summer. Great for boggy areas and rain gardens.
-Flower|Iris cristata|Dwarf Crested Iris|Part-Full Sun|Medium|0.5' - 0.75'|Low growing, rapidly spreading perennial. Blooms in spring. Produce pale blue lilac flowers with three parallel golden crested ridges on sepals. Narrow sword-shaped yellowish-green leaves and short stalks.
-Flower|Iris versicolor|Blue Flag|Part-Full Sun|Wet|2' - 3'|Native iris with charismatic, purple flowers.
-Flower|Kosteletzkya virginica|Virginia Saltmarsh Mallow|Full Sun|Wet|3' - 4'|Small pink flowers in summer attract butterflies. This plant does well around water edges and in well-irrigated soil.
-Flower|Liatris scariosa|Eastern Blazing Star|Full Sun|Dry|2' - 4'|Tall perennial that likes moist soils. Spikes of deep purple flower clusters bloom in late summer and attract birds and butterflies to feed. Clay and Drought Tolerant.
-Flower|Liatris scariosa var. nieuwlandii|Northern Blazing Star|Full Sun|Medium|2' - 5'|Purple, 1 flowers grow in columned bunches attract bees and butterflies in late summer. Loves sandy, rocky soils.
-Flower|Liatris spicata|Blazing Star|Full Sun|Medium|2' - 4'|Tall perennial that likes moist soils. Spikes of deep purple flower clusters bloom in late summer and attract birds and butterflies to feed. Clay and Drought Tolerant.
-Flower|Lilium superbum|Turk's Cap Lily|Full Shade|Moist|4' - 7'|This tall lily is noted for the spectacular, orange flowers that bloom in mid-summer, attracting butterflies.
-Flower|Lobelia cardinalis|Cardinal Flower|Part-Full Sun|Moist|1' - 4'|This native, red flower is a favorite of hummingbirds and makes an excellent cut flower as well!
-Flower|Lobelia inflata|Indian Tobacco|Part-Full Sun|Moist|1' - 2'|Not a true tobacco. Hairy stem with pointed leaves with white-purple flowers that attract small bees. Toxic to mammals, so deer resistant. An annual, but reseeds itself
-Flower|Lobelia siphilitica|Blue Lobelia|Part-Full Shade|Moist|1' - 5'|This showy blue flower creates late summer blooms that attract birds, butterflies, and is of special value to bumblebees.
-Flower|Lobelia spicata|Pale Spiked Lobelia|Full Sun|Medium|1' - 3'|Erect annual that readily reseeds. The flower is a spike-like cluster of small pale purplish-blue to bluish-white flowers. Capsule like fruits emerge in late fall. Ideal for a meadow planting.
-Flower|Ludwigia alternifolia|Seedbox|Part-Full Shade|Wet|2' - 3'|This yellow-flowering native blooms in summer, and loves marshes and wet meadows. Distinct square, seedpods give this plant its name.
-Flower|Lupinus perennis|Wild Lupine|Part-Full Sun|Medium|1' - 2'|Pea-like blue and purple flowers. Important food source for the caterpillar of several species of threatened butterflies.
-Flower|Melanthium virginicum|Bunchflower|Part-Full Sun|Moist|2' - 5'|Blooms large clusters of fragrant flowers in summer. Flowers bloom white to cream in color but over time they turn green, then maroon, and finally black. Wonderful fall interest for a garden or prairie!
-Flower|Mertensia virginica|Virginia Bluebell|Full Shade|Moist|1' - 2'|Early spring flower that is a treasure of Virginia! Short blooming, but grows into colonies that blanked the forest floor
-Flower|Mimulus ringens|Monkey Flower|Part-Full Sun|Wet|1' - 3'|This plant does well in wet soils and swampy areas. 1 purple flowers appear in pairs resemble the face of a smiling monkey and bloomin summer. Deer tolerant.
-Flower|Mitchella repens|Partridge Berry|Full Shade|Medium|0.1' - 0.25'|This native ground cover will naturalize an area through root notes. Small white flowers lead to bright red berries that ripen in summer and can persist through winter. Tolerates dry soil and heavy shade.
-Flower|Monarda didyma|Scarlet Beebalm|Full Sun|Medium|2' - 4'|Fragrant leaves are still used to make teas and salads. Tubular, two-lipped bright red flowers grow in clusters atop long stems and bloom in mid to late summer. Attracts bees, hummingbirds, butterflies. Deer and clay tolerant.
-Flower|Monarda fistulosa|Wild Bergamot|Full Sun|Medium|2' - 4'|This mint-family plant has light-purple flowers that blossom in late summer, which attract bees, hummingbirds, and butterflies. Tolerates some drought and clay soils. Deer Resistant.
-Flower|Monarda punctata|Spotted Beebalm|Part-Full Sun|Medium|1' - 2'|Yellow flowers spotted with purple in mid summer. The aromatic, oblong leaves may be used in teas. Long summer bloom period. Attracts butterflies. Drought Tolerant.
-Flower|Oenothera biennis|Evening Primrose|Full-Part Sun|Medium|3' - 5'|Bright yellow flowers open at dusk and close again in the morning when hit by sun. Highly drought tolerant. Fruits are capsules. Die after fruiting but seeds sprout the following year.
-Flower|Oligoneuron rigidum|Stiff leaved Goldenrod|Full Sun|Medium|3' - 5'|Blooms tiny, bright yellow flowers on dense flat-topped terminal clusters from late summer to early fall. Individual flowers are larger than those of other native goldenrods. Hairy broad-leaved stems.
-Flower|Opuntia humifusa|Virginian Prickly Pear|Full Sun|Dry|0.5' - 2'|This plant is the only cactus of the easter US! Bright, stunning, yellow flowers bloom in early summer on this cactus, giving way to edible fruits. Grows in clumps up to 3' across.
-Flower|Osmorhiza claytonii|Sweet Cicely|Shade|Medium-Wet to Medium-Dry|1' - 2'|Perennial wildflower with hairy dark green fernlike leaves and small white flowers. Attracts butterflies. Great planting for a woodland garden.
-Flower|Packera aurea|Golden Ragwort|Part-Full Shade|Moist|1' - 2'|This striking, shade loving ground cover spreads quickly by self-seeding and adds a long spring bloom of bright, yellow daisy-like flowers.
-Flower|Packera obovata|Roundleaf Groundsel|Part-Full Sun|Moist|1' - 1.5'|Blooms long lasting yellow daisy-like flowers from spring to early summer. Flowers atop sparsely leaved stem that rises from basal clump of serrate, rounded leaves that taper at the end. Attracts butterflies.
-Flower|Parthenium integrifolium|Wild Quinine|Full Sun|Dry|2' - 4'|Clump forming perennial naturally found in dry soils of prairies, glades and rocky woods. Bloom white wolly looking flowers from May to August. Rough fragrant leaves with toothed margins.
-Flower|Pedicularis canadensis|Wood Betony|Full to Partial|Medium-Wet to Dry|1' - 2'|Herbaceous perennial with fern like leaves and silvery hairs. Blooms bright yellow and red flower clusters on a singular stalk. Attracts bumblebees.
-Flower|Penstemon digitalis|Foxglove White Beardtongue|Part-Full Sun|Medium|2' - 4'|White flowers adorn tall, woody stalks on this lovely addition to forest edges or clearings.
-Flower|Penstemon hirsutus|Hairy Beardtongue|Part-Full Sun|Medium|1' - 2'|Lovely trumpet-shaped, lavender flowers that bloom late May through June attract a variety of pollinators. Deer resistant!
-Flower|Penstemon laevigatus|Eastern Smooth Beardtongue|Full to Partial|Medium to Medium-Dry|1' - 4'|Erect herbaceous perennial with a large basal rosette and panicle of tubular purple flowers. Prefers wetter soils compared to other penstemon species. Attracts bees butterflies and hummingbirds.
-Flower|Penstemon pallidus|Pale Beardtongue|Full to Partial|Medium-Dry to Dry|1' - 2'|Earlier blooming penstemon covered with soft white hairs. Blooms tubular light purple flowers. Attracts native bees. Drought and deer resistant.
-Flower|Phlox divaricata|Wild Blue Phlox|Full Shade|Medium|1' - 1.5'|This spreading wildflower can form mats, thriving in woodland shade. Groups of star shaped flowers bloom in spring, creating striking carpets of color.
-Flower|Phlox maculata|Wild Sweet William|Part-Full Sun|Moist|2' - 3'|Upright flower with fragrant, pink, star-shaped flowers that attract hummingbirds and bloom in the summer. Prefers good air circulation and moist soils. Deer resistant.
-Flower|Phlox paniculata|Garden Phlox|Part-Full Sun|Medium|2' - 4'|This taller phlox produces fragrant, pink-purple blooms in late summer that attract butterflies and hummingbirds. Deer, clay tolerant
-Flower|Phlox stolonifera|Creeping Phlox|Part-Full Sun|Medium|0.5' - 1'|Fragrant, tubular, lavender flowers emerge in spring. Can spread to form colonies in good conditions, making this an excellent ground cover. Drought, deer tolerant.
-Flower|Physostegia virginiana|Obedient Plant|Part-Full Sun|Wet|3' - 4'|Tubular, two-lipped pale-purple flower spikes bloom through summer and attract hummingbirds. Each individual flower will temporarily be pushed into a new position! Tolerates Deer and Clay Soil.
-Flower|Podophyllum peltatum|May Apple|Full to Partial|Medium to Medium-Dry|1' - 2'|One of the first herbacous perennials to emerge in spring. Has one to two umbrella like leaves and blooms a singular white flower at the axil of the leaves. Produces a small golden yellow edible fruit. Plant goes dormant in the summer. Forms colonies through rhizomes.
-Flower|Polemonium reptans|Jacobs Ladder|Full Shade|Moist|1' - 2'|This low growing wildflower thrives in rich, moist, partially-shaded soil where it can self-seed. Light blue bell-shaped flowers appear in late spring.
-Flower|Pseudognaphalium obtusifolium|Sweet Everlasting|Full Sun|Medium|1' - 3'|White, conical flowerheads bloom in summer. Whitish hairs cover the surface of the upper stems.
-Flower|Pycnanthemum muticum|Clustered Mountain Mint|Part-Full Sun|Medium|1' - 3'|Clump forming perennial can spread by rhizomes. Short, densly clustered leaves have a strong mint aroma. Tubular, pink flowers top plants in mid to late summer and attract butterflies and bees.
-Flower|Pycnanthemum tenuifolium|Narrow Leafed Mountain Mint|Part-Full Shade|Dry|2' - 3'|This is a vigorous grower and will spread well. Narrow leaves emit a mint-like scent when crushed and is uses in teas. Small white flowers that bloom in mid summer. Tolerates Drought, Clay soils.
-Flower|Pycnanthemum verticillatum|Hairy Mountain Mint|Part-Full Shade|Dry|1' - 3'|Easy to care for once established, this clump forming mind grows through rhizomes. Small, light-purple flowers attract bees, butterflies. Leaves give a strong mint aroma.
-Flower|Pycnanthemum virginianum|Virginia Mountain Mint|Part-Full Shade|Moist|1' - 3'|This aromatic native is a true mint with delicate white flowers and can be used to make tea! Vigorous grower and deer resistant!
-Flower|Rhexia virginica|Meadow Beauty|Full to Partial|Wet to Medium-Wet|1' - 2'|Water loving perennial that spreads rapidly through tubers. Taller plants sprawl along the ground while shorter ones stand erect. Blooms bubblegum pink flowers with striking yellow anthers. Red seed capsules add winter interest in the garden.
-Flower|Rudbeckia fulgida|Orange Coneflower|Full Sun|Dry|2' - 3'|Clump-forming coneflower with yellow, daily-like flowers in mid-summer to fall. Prefer consistent moisture until established, then drought tolerant. Deer tolerant. Dry/rocky soil tolerant.
-Flower|Rudbeckia fulgida var. fulgida|Black Eyed Susan|Full Sun|Medium|2' - 3'|Clump-forming coneflower with yellow, daisy-like flowers in mid-summer to fall. Prefer consistent moisture until established, then drought tolerant. Deer tolerant. Dry/rocky soil tolerant.
-Flower|Rudbeckia hirta|Black Eyed Susan|Part-Full Shade|Dry|1' - 4'|One of the most popular native flowers, Black-Eyed Susans spread over open fields and attract butterflies. Deer Resistant!
-Flower|Rudbeckia laciniata|Cut-Leaved Coneflower|Part-Full Sun|Dry|3' - 10'|Cheery, yellow flowers stand tall and attract butterflies, bees, and some birds. Also makes great cut flowers.
-Flower|Rudbeckia triloba|Brown Eyed Susan|Part-Full Shade|Dry|1' - 3'|Densely branched short-lived perennial will self-seed. Dyellow, daisy-like flowers bloom densely in the plant from summer to fall. Attracts butterflies. Deer resistant.
-Flower|Ruellia humilis|Low Wild Petunia|Part-Full Sun|Dry|1.5' - 2'|Tubular, bell-shaped lavender flowers bloom May to October. Oblong to lancelike olive green leaves. Hairy stems and leaves. Attracts butterflies.
-Flower|Ruellia strepens|Smooth Wild Petunia|Full Shade|Medium|1' - 3'|Clump-forming perennial with pale lilac to lavender petunia like flowers. Flowers bloom May to September. Tolerate close to full shade.
-Flower|Sagittaria latifolia|Broad-leaved Arrowhead|Part-Full Sun|Moist|2' - 3'|Found in marshes, swamps and bogs this plant prefers standing water or moist soils. Blooms three petaled white flowers and underground starchy tubers that are eatten by ducks and turtles.
-Flower|Salvia lyrata|Lyre-Leaved Sage|Full Sun|Moist|1' - 2'|This perennial prefers sandy soils and clays. Two-lipped, purple flowers bloom in late spring and attract bees and butterflies. Can self-seed to naturalize an area. Deer resistant.
-Flower|Sanguinaria canadensis|Bloodroot|Full Shade|Moist|0.5' - 1'|Bright, short-lived, white, 2 flowers bloom in early spring. Spreads to form colonies through rhizomes. Goes dormant in mid-to-late summer. Reddish-orange sap bleeds when plant is cut.
-Flower|Saururus cernuus|Lizard's Tail|Partial to Shade|Wet to Medium-Wet|1' - 4'|Water loving perennial that gets its name for their long racemes of white flowers. Roots and foliage smell of citris and sassafrass. Form large colonies along waterways.
-Flower|Sedum pulchellum|Widow's Cross|Part-Full Sun|Medium|0.5' - 0.5'|Readily reseeding annual often found in rocky outcroppings. Pink flowers with black and red dotted petals. Lime green succulent-like leaves.
-Flower|Sedum ternatum|Woodland Stonecrop|Part-Full Shade|Medium|0.25' - 0.5'|Clusters of tiny white, star-like flowers with purplish stamens appear on stems above the foliage in spring. Rabbit, deer and drought tolerant.
-Flower|Senna hebecarpa|Wild Senna|Part-Full Shade|Moist|4' - 6'|Bright, yellow flowers form in dense clusters bloom in summer to attract pollinators and butterflies. Black seed pods emerge in fall and support wildlife.
-Flower|Silene caroliniana|Wild Pink|Part-Full Sun|Dry|0.5' - 1'|This showy, mat-forming plant boasts clusters of bright pink, star-shaped flowers that bloom early spring.
-Flower|Silene stellata|Starry Campion|Full to Partial|Medium-Wet to Medium-Dry|2' - 3'|Clump forming perennial with wide branching panicles of frilly white flowers. Whorled lance shaped leaves. Attracts butterflies, bumblebees and moths.
-Flower|Silene virginica|Fire Pink|Part-Full Sun|Dry|0.5' - 2'|This clump forming perennial grows in rocky, wooded slopes and prefer sandy or gravelly soils. Five pointed, 2 red flowers with notched tips bloom in spring and can spread by self-seeding. Drought, clay tolerant
-Flower|Silphium integrifolium|Rosin Weed|Full Sun|Dry|2' - 6'|Sunflower-like, 2-3 yellow flowers grow on upright, hairy stems in summer. Attracts birds and butterflies. Tolerate clay soil.
-Flower|Silphium laciniatum|Compass Plant|Full Sun|Very dry|5' - 9'|Tall and sturdy, sunflower-like flowers (5 wide!) bloom in the summer. Split stems exude a fragrant resin. Tolerates poor soil.
-Flower|Sisyrinchium angustifolium|Narrowleaf Blue-eyed Grass|Part-Full Sun|Moist|1.5' - 2'|Blue flowers with grass-like foliage. Not actually a grass but in the iris family! Sword-shaped leaves form a fan shape similar to other plants in the iris family. Grow from rhizomes.
-Flower|Smallanthus uvedalius|Bear's Foot|Part-Full Sun|Medium|3' - 8'|Herbaceous perennial in the Asteraceae (daisy) family. Large lobed leaves cup the stem. Shape of the leaf gives it the name of bear's foot. Naturally found growing in woodland edges, meadows, along streams, and open woods. Native bees hibernate in stems during winter.
-Flower|Solidago caesia|Blue stemmed Goldenrod|Full-Part Sun|Moist|1' - 4'|Perennial that grows 3 feet tall. Bloom showy clusters of yellow flowers in summer and early fall that hug greenish-purple stems. Does not spread as rapidly or aggressively as some other goldenrods.
-Flower|Solidago canadensis|Common Solidago/Goldenrod|Full Sun|Medium|4' - 5'|Late summer to early fall blooms of abundant, small, bright yellow flowers. A wonderful plant for native bees and butterflies. Rhizomes can help this plant colonize an area.
-Flower|Solidago flexicaulis|Zigzag Solidago|Part-Full Sun|Medium|1' - 3'|Yellow flowers bloom from mid-summer to fall and are attractive to bees and butterflies. Plants may be grown by seed and can self-seed in the garden. Deer, heavy shade and clay soil tolerant.
-Flower|Solidago juncea|Early Goldenrod|Full Sun|Dry|2' - 4'|Tiny bright yellow flowers, provides good color and contrast for late summer and early fall. A wonderful plant for native bees and butterflies. Tolerates clay soil, drought, and deer.
-Flower|Solidago odora|Sweet Goldenrod|Full-Part Sun|Moist|1' - 2'|Arching stems of yellow flowers sprout from basal clumps in late summer and early fall. Does not spread as aggressively as some other goldenrod species. Drought resistant and clay tolerant.
-Flower|Solidago rugosa|Wrinkle-leaved Solidago|Full Sun|Moist|3' - 5'|Rhizomatous plant may also self seed. Long spears of showy yellow flowers bloom in lat summer to fall, attracting bees and butterflies. Tolerates deer and clay soil.
-Flower|Solidago speciosa|Showy Goldenrod|Full Sun|Moist|2' - 7'|One of the most showy native goldenrods as their common name suggests. Tall upright stems host foot-long rods of golden yellow flowers in the early fall. Tolerates drought and clay soil.
-Flower|Symphyotrichum cordifolium|Heart-Leaved Aster|Full Shade|Dry|3' - 5'|Leafy, upright-branched stems are topped with daisy-like, light-blue aster flowers in late summer and fall. Lower leaves are heart-shaped and up to 5 long. Attractive to butterflies.
-Flower|Symphyotrichum laeve|Smooth Blue Aster|Full Sun|Medium|2' - 4'|This aster tolerates drought and poor soils, and will reseed itself easily. Small (1) violet-blue flowers with yellow centers bloom in autumn and attract butterflies.
-Flower|Symphyotrichum lateriflorum|Calico Aster|Full to Shade|Medium-Wet to Medium-Dry|2' - 3'|Herbaceous perennial in the daisy family. Blooms many white to pale lavendar flowers in late summer. Light green to reddish brown hairy stems.
-Flower|Symphyotrichum novae-angliae|New England Aster|Full Sun|Moist|3' - 7'|Late-blooming, showy aster that hosts a variety of butterflies, and provides a much needed food source during fall migration.
-Flower|Symphyotrichum oblongifolium|Aromatic Aster|Full Sun|Dry|1' - 3'|Purple aster-flowers with yellow disks emerge in late summer, attracting birds and butterflies.. Tolerates sandy soils, poor soils, and drought.
-Flower|Symphyotrichum pilosum|Frost Aster|Part-Full Sun|Moist|2' - 4'|Noted for its extremely hairy stem and leaves. Flowers bloom in August to October. Best growth occurs in moist, semi-shaded woodland areas. Can tolerate periodic flooding. Can spread aggressively by self-spreading.
-Flower|Thalictrum dioicum|Early Meadow Rue|Full-Part Sun|Moist|1' - 2'|Native perennial wildflower in the Buttercup family. Lacy gray-green compound leaves. Blooms tiny, drooping, greenish to white petal-less flowers in late spring (April-May).
-Flower|Tiarella cordifolia|Creeping Foam Flower|Full Shade|Moist|0.5' - 1'|Perennial with glossy heart shaped leaves forms into dense clumps. Showy white flower clusters rise above the leaves in April and May and have a feathery appearance. Good woodland groundcover.
-Flower|Tradescantia ohiensis|Ohio Spiderwort|Full to Partial|Medium-Wet to Dry|2' - 3'|Clump forming perennial in the spiderwort family that blooms vibrant purple flowers with three petals in mid to late summer. Slender blue-green leaves resemble grass blades. Long bloom period.
-Flower|Tradescantia virginiana|Virginia Spiderwort|Part-Full Shade|Moist|1.5' - 3'|Violet-blue to purple, three-petaled flowers bloom in succession from May into early July. Tolerates clay and wet soil.
-Flower|Triadenum virginicum|Virginia Marsh St. John's Wort|Part-Full Shade|Wet|1' - 2'|Small (1/2) pink to red, five-pointed flowers bloom in the summer in bogs, wet meadows, and swamps.
-Flower|Trillium grandiflorum|White Trillium|Part-Full Shade|Moist|1' - 3'|Largest and showiest flower of all trilliums! Flowers are 2 to 4 inches across and held above large glossy green bracts. Spreads slowly by rhizomes.
-Flower|Triodanis perfoliata|Venus' Looking Glass|Part-Full Shade|Dry|1' - 2'|Small, unbranched plant with a light green, grooved stem. Blue or violet flowers emerge in the spring, supporting the Plasterer bee.
-Flower|Uvularia grandiflora|Bellwort|Full Shade|Moist|1' - 2'|Yellow flowers have long, twisted petals and bright green leaves. Plant is droopy in appearance. Excellent shade and border plant. Drought tolerant.
-Flower|Verbena hastata|Blue Vervain|Part-Full Sun|Wet|2' - 6'|Delicate, blue-violet flowers sit atop stalks in mid summer, and can self-seed. They love prairies and rain gardens.
-Flower|Verbena urticifolia|White Vervain|Part-Full Shade|Medium|3' - 5'|Summer blooms of small, charming 1/8 white flowers on slender spikes are a nectar source for pollinators and insects. Seeds feed songbirds.
-Flower|Vernonia gigantea|Giant Ironweed|Part-Full Sun|Wet|5' - 8'|Upright flowering perennial with rose-purple composite flowers disks bloom from summer through fall. Durable plant. Does well in wet soil. Deer resistant.
-Flower|Vernonia noveboracensis|New York Ironweed|Full Sun|Wet|5' - 8'|Striking purple flowers add color to damp roadsides and ponds from late summer to fall.
-Flower|Veronicastrum virginicum|Black Root|Full Sun|Medium|4' - 7'|Tall herbaceous perennial with whorled lance shaped leaves and white to pale blue flowering racemes that bloom from late spring to summer.
-Flower|Viola pedata|Bird's Foot Violet|Full to Partial|Medium to Dry|0.5' - 1'|Small perennial Viola that spreads through seeds. Unique bird-foot shaped foliage. Often considered one of the most beautiful species of Violas. Attracts bees, butterflies, mammals and songbirds.
-Flower|Viola pedatifida|Prairie Violet|Part-Full Sun|Moist|0.5' - 0.75'|This clump-forming plant with deep purple-blue flowers blooms from April to June and works as a ground cover. Can self-seed in good conditions. Deer tolerant.
-Flower|Viola sororia|Common Blue Violet|Part-Full Sun|Moist|0.5' - 1'|Herbaceous perennial that spreads through rhizomes and self seeding. Prefers partial sun but will grow in most light conditions. Produces showy blue, pink, purple and white flowers in early spring. Attracts bees and butterflies.
-Flower|Yucca filamentosa|Adam's Needle|Full Sun|Dry|4' - 8'|Flowering stalk rises from center in late spring. White, showy, bell shaped flowers. Attracts hummingbirds, moths, small mammals, and songbirds. Only pollinated by Yucca Moths. Tolerant of poor, sandy soils, heat and drought. Will form a small colony over time from basal offsets.
-Flower|Zizia aptera|Heart-leaf Golden Alexanders|Part-Full Shade|Medium|1' - 3'|Small clusters of bright yellow flowers bloom in late spring, growing in colonies in open woodland and prairies. Perfect for cut flowers!
-Flower|Zizia aurea|Golden Alexanders|Part-Full Shade|Medium|1' - 3'|Flat-topped clusters of compound yellow flowers bloom in late spring. Attracts butterflies, as the larvae of the swallowtail feed on it.
-Grass|Andropogon gerardii|Big Bluestem|Full Sun|Dry|5' - 8'|Tall prairie grass with leaves and stems that change color with the seasons. Grows well in any soil. Deer and drought resistant.
-Grass|Andropogon virginicus|Broom Sedge|Full Sun|Dry|2' - 3'|A clump forming grass that turns a golden orange in the fall and winter, creating spectacular views. Does well in poor soils and tolerates salt well.
-Grass|Bouteloua curtipendula|Sideoats Grama|Full Sun|Dry|3' - 4'|Distinctive oat-like seed spikes hang to the side of its flowering stems, with blueish-grey leaves. Grass turns gorgeous golds and oranges as it goes dormant each winter, creating lovely structure in your garden. Drought tolerant.
-Grass|Bromus latiglumis|Ear-leaved Brome|Partial to Shade|Medium to Medium-Dry|3' - 4'|Vibrant green cool season grass. Clump forming- terrific habitat for birds and mammals.
-Grass|Calamagrostis canadensis|Bluejoint Reedgrass|Part-Full Shade|Moist|2' - 5'|Thriving in wet areas, this bunchgrass is also drought tolerant. Grows rapidly to fill a desired space.
-Grass|Carex amphibola|Creek Sedge|Full Shade|Moist|1.5' - 1.5'|Vigorous clump forming sedge with narrow, arching leaves. Good for shade and rain gardens. Deer and pest resistant. Attracts skipper butterflies.
-Grass|Carex appalachica|Appalachian Sedge|Part-Full Shade|Dry|0.5' - 0.5'|Weeping sedge with hair like foliage grows in attractive mounded tufts. Can be used as ground cover or replacement for grass. Adaptable to difficult dry areas. Deer tolerant.
-Grass|Carex blanda|Eastern Woodland Sedge|Part-Full Shade|Medium|1' - 2'|This evergreen sedge displays small flower-spikes in late spring. Drought tolerant. Evergreen
-Grass|Carex eburnea|Bristle-Leaved Sedge|Full Shade|Medium|0.5' - 1'|Soft thread-like leaves form spherical porcupine-like clumps. Will thrive with consistent moisture but can adapt to sandy or rocky soils.
-Grass|Carex flaccosperma|Blue Wood Sedge|Part-Full Shade|Moist|1' - 1'|Evergreen sedge with arching blue-green leaves forms slowing spreading clumps. Grows best in evenly moist woodland areas with bright shade but will take some sun.
-Grass|Carex pensylvanica|Pennsylvania Sedge|Part-Full Shade|Dry|0.1' - 1'|This soft, graceful ground cover is semi-evergreen in milder climates. It can be used as a lawn alternative but does not tolerate foot traffic.
-Grass|Carex radiata|Eastern Star Sedge|Full Shade|Moist|0.5' - 2.5'|Evergreen clump growing sedge. Grass-like medium blades. Tolerates wet soil.
-Grass|Carex vulpinoidea|Fox Sedge|Part-Full Shade|Wet|1' - 3'|Narrow grass-like leaves grow in clumps in wet soils. Seedheads spread out from the center of the clump, resembling a fox tail. Can spread quickly. Deer tolerant.
-Grass|Chasmanthium latifolium|River Oats|Part-Full Shade|Moist|2' - 5'|Shade tolerant, aggressive spreading grass. Characterized by striking flat, drooping seed heads that flutter in the breeze and turn bronze late summer.
-Grass|Danthonia spicata|Poverty Oat Grass|Full-Part Sun|Dry|1' - 2'|Short bunchgrass perennial with rosettes of curly leaves. Flowering stems can be up to two feet high but base of rosett stay close to the ground. Can grow in dry, rocky and sandy soils.
-Grass|Elymus hystrix|Bottlebrush Grass|Full Shade|Moist|2' - 3'|Loose upright tufts of narrow-bladed grass. Greenish flower heads, resembling bottle brushes, rise in the summer. Can tolerate drought and clay tolerant.
-Grass|Elymus virginicus|Wild Rye|Part-Full Sun|Medium|2' - 5'|A shorter bunchgrass that tolerates drought, deer, and erosion. Does will in a wide variety of soils too!
-Grass|Eragrostis spectabilis|Purple Lovegrass|Full Sun|Medium|1' - 2'|Hardy, native perennial with seed heads that turn purple mid-summer, giving color to the landscape.
-Grass|Muhlenbergia capillaris|Pink Muhlygrass|Part-Full Sun|Dry|2' - 4'|Best in full sun, this clump-grass is known for its beautiful, pink foliage that blooms in foot-long spires in fall. Drought tolerant.
-Grass|Panicum virgatum|Switchgrass|Part-Full Sun|Moist|3' - 6'|Clump grass topped with pink-tinged flower panicles that rise over the grass and are a source of food for birds in the winter. Drought and flood tolerant.
-Grass|Schizachyrium scoparium|Little Bluestem|Full Sun|Medium|2' - 4'|This small bunchgrass creates clusters of fluffy seed pods that add great interest even through the winter. Tolerates clay, dry, and rocky soils.
-Grass|Scirpus atrovirens|Dark Green Bulrush|Part-Full Sun|Moist|4' - 5'|This large rush can grow in standing water, making it excellent for the edges of ponds. Spreads rhizomously to form colonies.
-Grass|Scirpus cyperinus|Woolgrass|Part-Full Sun|Wet|3' - 5'|Thrives easily in wet, standing water, making this ideal for ponds. Can colonize an area as well. Reddish brown, wooly seed clusters emerge in late summer, remaining throughout the winter.
-Grass|Sorghastrum nutans|Indian Grass|Full to Partial|Medium to Dry|5' - 7'|Tall warm season bunchgrass that blooms yellow in late summer. Foliage turns a beautiful yellow-orange in fall. Provides food and cover year round for wildlife especially birds and mammals. Tolerant to a wide variety of soil types.
-Grass|Sporobolus heterolepis|Prairie Dropseed|Full Sun|Dry|2' - 3'|This slow-growing, clump forming grass gains orange hues in the fall and retains much of its shape and appearance in through the winter. Flowers have a unique scent. Drought and clay tolerant.
-Grass|Tridens flavus|Purpletop|Full Sun|Dry|4' - 5'|Purplelish spikelets on stalks that, then planted in groups, creates a beautiful purple-topped field. Grass is home to many native insect species and seed feeds birds. Drought tolerant.
-Shrub|Amorpha fruticosa|False Indigo Bush or River Locust|Full Sun|Moist|4' - 12'|Tubular, scented flowers bloom in May-June in spiked clusters, followed by small seed pods in July and August. Good for moist areas or poor soils. Attracts Butterflies. Throwing Shade
-Shrub|Amorpha nana|Fragrant False Indigo|Full Sun|Medium|1' - 2'|Bright green leaves and showy, upright purple flowers that emerge in summer. Deer resistant.
-Shrub|Aronia arbutifolia|Red Chokeberry|Part-Full Sun|Moist|6' - 8'|Pink flowers emerge in spring, giving way to clusters of red fruits that can persist to winter. Leaves turn bright red in fall. Can form colonies through suckering. Tolerates clays and boggy soil. Throwing Shade
-Shrub|Aronia melanocarpa|Black Chokeberry|Part-Full Sun|Moist|3' - 6'|Clusters of white flowers in late spring, with black autumn berries and purple/red fall color. Tolerates wet soil. Throwing Shade
-Shrub|Baccharis halimifolia|Groundsel Bush|Part-Full Sun|Moist|5' - 12'|Multi-trunked shrub in the aster family. Blooms small greenish white flowers in fall. Frilly white seedheads appear in late fall and winter. Readily reseeds itself. Heat and drought tolerant.
-Shrub|Callicarpa americana|Beautyberry|Part-Full Shade|Moist|3' - 6'|Needs minimal care when established. Bright violet berries attract birds and give this shrub its name. Throwing Shade
-Shrub|Calycanthus floridus|Calycanthus|Part-Full Shade|Medium|6' - 10'|Fragrant, reddish-brown flowers bloom in May, and give way to brown seed capsules which mature in fall and persist through the winter. Leaves are fragrant when crushed. Prefers rich, loamy soil. Can form colonies. Deer, clay, and wet-soil tolerant.
-Shrub|Ceanothus americanus|New Jersey Tea|Part-Full Sun|Dry|3' - 4'|Dense, compact shrub with cylindrical groups of small white flowers that bloom in early spring. Dried leaves used as a caffeine-free tea. Can grown in rocky, dry soil. Drought resistant. Throwing Shade
-Shrub|Cephalanthus occidentalis|Buttonbush|Part-Full Sun|Wet|5' - 12'|Flood tolerant, even to standing water. Small, fragrant white flowers in early to mid-summer, and attract bees and butterflies. Hard spherical fruits emerge in late summer and persist through winter. Throwing Shade
-Shrub|Clethra alnifolia|Sweet Pepperbush|Part-Full Sun|Moist|3' - 8'|Native to marshes, this shrub does well in full shade, wet soils, and clays. Large, upright spears of flowers emerge in summer, attracting butterflies. Throwing Shade
-Shrub|Cornus amomum|Silky Dogwood|Part-Full Shade|Moist|5' - 8'|This shrub gets its name from the silky hairs under its leaves. Yellowish flowers bloom in late spring and give way to berries that turn blue. Deer, wet soil tolerant. Throwing Shade
-Shrub|Cornus racemosa|Grey Dogwood|Part-Full Shade|Moist|10' - 15'|Though deer may forage on the leaves of this shrub, butterflies and birds (including Eastern Bluebirds) enjoy the fruits and white blooms. Throwing Shade
-Shrub|Eubotrys racemosa|Swamp Doghobble|Part-Full Shade|Moist|4' - 6'|deciduous shrub with shiny green and red stems. White bell-shaped flowers on 3-4' racemes in spring that give way to light brown fruits and red leaves in fall.
-Shrub|Euonymus americanus|Strawberry Bush|Part-Full Shade|Medium|4' - 6'|Spacious, airy, deciduous shrub. Bright red berries emerge in fall to feed birds and wildlife. Ripe fruits also give the plant the name bursting hearts. Throwing Shade
-Shrub|Gaylussacia baccata|Black Huckleberry|Part-Full Shade|Moist|1' - 3'|Small, red flowers bloom in late spring on yellowish-green stems and leaves. Berries follow the flowers and turn to blue-black. Leaves turn red in the autumn. Can tolerate moist soil. Throwing Shade
-Shrub|Hamamelis virginiana|Witch Hazel|Part-Full Shade|Medium|15' - 20'|Fall-blooming shrub makes yellow flowers and seed-pod fruits that grow through winter and open the following year. Deer and clay tolerant. Throwing Shade
-Shrub|Hydrangea arborescens|Smooth Hydrangea|Full to Partial|Medium to Medium-Moist|3' - 5'|Rounded, deciduous shrub that is a popular planting in native gardens. Produces large clusters of blooms on new shoots. Attracts butterflies, moths and songbirds.
-Shrub|Hypericum prolificum|Shrubby St. John's Wort|Part-Full Sun|Medium|1' - 5'|Compact, rounded shrub with bright yellow flowers in summer. Works well as a hedge and to stabilize banks. Tolerates rocky, sandy soils and some drought. Throwing Shade
-Shrub|Itea virginica|Sweetspire|Part-Full Sun|Wet|3' - 4'|An upright, rounded shrub with tiny white flowers in drooping cylinders in early spring. Prefers wet soils and can form colonies through suckering. Adaptable to shade and wet locations. Throwing Shade
-Shrub|Kalmia angustifolia|Sheep Laurel|Part-Full Shade|Moist|1' - 3'|Evergreen shrub with groups of round, pink flowers in summer. Can spread to form colonies. Does well at bog or water edges. Host for the Brown Elfin butterfly.
-Shrub|Kalmia latifolia|Mountain Laurel|Part-Full Shade|Moist|5' - 15'|Broadleaf evergreen shrub with late-spring 1 cup-shaped rose-to-purple flowers. Brown fruits emerge and last through the winter. Showy blooms make this an excellent focal point in a yard. Avoid clays. Throwing Shade
-Shrub|Lindera benzoin|Spicebush|Part-Full Shade|Medium|6' - 12'|Groups of greenish flowers bloom in spring. Needs male and female plants to pollinate berries. Spicebush swallowtail larvae feed on the leaves of this shrub. Clay and drought tolerant. Throwing Shade
-Shrub|Morella pensylvanica|Northern Bayberry|Part-Full Sun|Medium|3' - 12'|Hard, white berries remain on the female plant all winter and feed birds. Tolerates a wide variety of wet to dry soils, including some salt spray. Male and Female plants are needed to make berries. Throwing Shade
-Shrub|Myrica cerifera|Southern Bayberry|Full-Part Sun|Medium|20' - 25'|Dioecious broadleaf evergreen shrub or tree. Requires both male and female plants for good berry production. Can sucker to form sizable colonies. Great planting for a privacy hedge. Produces small yellow flowers that give way to bluish-grey waxy berries.
-Shrub|Physocarpus opulifolius|Ninebark|Part-Full Sun|Dry|5' - 8'|Upright deciduous shrub with rough bark that peels in strips, revealing reddish to brown layers of inner bark. Small white flowers appear in late spring and red fuit after. Grows in harsh conditions. Throwing Shade
-Shrub|Prunus angustifolia|Chickasaw Plum|Part-Full Sun|Medium|4' - 15'|Tall shrub. Smooth redish bark with numerous light lenticels. Bark becomes scaly and shallowly furrowed as it ages. Blooms small white flowers in clumps tht give way to edible yellow-to-red drupes that mature in summer.
-Shrub|Rhododendron arborescens|Sweet Azalea|Part-Full Shade|Moist|8' - 20'|Leaves turn red and purple in the fall. Fragrant, funnel-shaped white flowers bloom in groups of 3-6 early summer with protruding stamen.
-Shrub|Rhododendron maximum|Great Laurel|Part-Full Shade|Moist|5' - 15'|Large, late-blooming evergreen shrub. Large leaves are tinged with orange underneath. 2 rose-purple flowers bloom in early summer. Throwing Shade
-Shrub|Rhododendron periclymenoides|Pinxter Azalea|Part-Full Shade|Moist|3' - 6'|Clusters of pink-white flowers bloom in April right before the emergence of foliage. Attracts hummingbirds and butterflies. Avoid wet soils and clays. Throwing Shade
-Shrub|Rhododendron prinophyllum|Roseshell Azalea|Part-Full Shade|Moist|4' - 8'|Pink flowers bloom early spring, often before foliage. Bright green leaves turn bronze in the fall. Throwing Shade
-Shrub|Rhododendron viscosum|Swamp Azalea|Part-Full Shade|Moist|3' - 5'|Found in swamps and bogs, this plant can tolerate periodic drought, although not consistently wet roots. White-to-pink flowers emerge early summer. Leaves turn yellow, orange, purple in fall. Throwing Shade
-Shrub|Rhus aromatica|Fragrant Sumac|Part-Full Sun|Very dry|2' - 6'|This reaching shrub can spread through root suckers. It's leaves are aromatic when crushed and turn color in the fall. Small, red fruits on female shrubs are edible by wildlife. Tolerates clay, poor soils. Throwing Shade
-Shrub|Rhus typhina|Staghorn Sumac|Part-Full Sun|Very dry|15' - 25'|Reddish hairs cover young branches like the velvet of stag horns on deer. Tooth-leaved branches turn yellow/orange/red in autumn. Green-yellow flowers in early summer. Pyramidal red fruits ripen in autumn and persist through winter. Drought Tolerant. Throwing Shade
-Shrub|Robinia hispida|Bristly Locust|Full Sun|Dry|2' - 10'|Rose to pale purple flowers appear in May, followed by bristly, purple seed pods. Plant is stiffly hair. Tolerates dry, poor soils and Deer. Aggressive spreader.
-Shrub|Rosa carolina|Pasture Rose|Full Sun|Dry|3' - 6'|Can spread to form colonies. Single, pink flowers bloom in may with red hips in the late summer. Attracts birds and butterflies
-Shrub|Rosa palustris|Swamp Rose|Full Sun|Wet|3' - 6'|Pink blooms in the summer characterize this swamp plant, making it an excellent choice for wet, sunny conditions. Tolerates seasonal flooding.
-Shrub|Rubus odoratus|Purple Flowering Raspberry|Part-Full Sun|Moist|3' - 6'|Deciduous suckering shrub with large canes. One of the most easily identifiable rubus species due to their gorgeous palmately lobed leaves, hairy stems and pink-purple rose shaped flowers that bloom in Spring and Summer. Edible fruits mature in summer. Attracts bees, butterflies, birds and small mammals
-Shrub|Salix discolor|Pussy Willow|Full-Part Sun|Moist|10' - 20'|Large multi stemmed dioecious shrub. Male shrubs bloom silky gray flowers in spring before leaves emerge. Females produce smaller green catkins. Rapid spreading to form thickets. Tolerant of severe pruning after flowering.
-Shrub|Sambucus canadensis|Elderberry|Part-Full Sun|Wet|5' - 12'|Deciduous shrub prefers moist soils. Tiny, lemon-scented flowers appear in clusters 10 across in early summer and create black elderberries in late summer that can make jams, pie fillings, and feed wildlife. Tolerates clay. Throwing Shade
-Shrub|Spiraea latifolia|Meadowsweet|Part-Full Sun|Wet|3' - 6'|Whitish pink blooms in summer. Showy flowers attract butterflies and fruits attract birds in fall. Needs moist soils.
-Shrub|Spiraea tomentosa|Steeplebush|Full Sun|Moist|2' - 4'|Upright, multi-stemmed, suckering, deciduous shrub. Bloom tiny pink, rose-purple flowers on terminal spikes that from mid-summer to early autumn. Attract butterflies.
-Shrub|Staphylea trifolia|Bladdernut|Part-Full Sun|Medium|10' - 15'|Fast-growing, upright, deciduous, perennial and flowering shrub. Heavily branched and capable of reproducing by suckering. Bloom showy green-white bell shaped flowers from April to May. Flowers give way to inflated, bladder-like, papery seed capsules maturing in late summer, persist into early winter. Attracts pollinators and small mammals. Throwing Shade
-Shrub|Symphoricarpos albus|Common Snowberry|Full-Part Sun|Moist|3' - 6'|Dense suckering deciduous shrub. Attractive bright green leaves. Pink to white flowers in spring and summer are followed by attractive white fruits that last into winter. Forms colonies but needs more than one genetic strain to fruit.
-Shrub|Vaccinium angustifolium|Lowbush Blueberry|Part-Full Shade|Medium|1' - 2'|Small, white, bell-shaped flowers in spring give way to plentiful blueberries in the summer--edible to people and animals! Throwing Shade
-Shrub|Vaccinium corymbosum|Highbush Blueberry|Part-Full Sun|Medium|6' - 12'|Grown in bogs, this plant can tolerate wet soils. Blueberries are edible Throwing Shade
-Shrub|Viburnum acerifolium|Mapleleaf Viburnum|Part-Full Sun|Medium|6' - 12'|Small, rounded shrub with maple-like leaves. Tiny white flowers bloom in mid spring and blueish-black fruit in late summer. More shade tolerant than many viburnums. Established plants are drought tolerant. They will sucker to form colonies.
-Shrub|Viburnum dentatum|Arrowwood Viburnum|Part-Full Sun|Medium|6' - 8'|This shrub creates white groups of flowers in late spring that create blue-black berries, attracting birds in fall. Yellow, orange, and red foliage in fall.Clay tolerant. Throwing Shade
-Shrub|Viburnum lentago|Nannyberry Viburnum|Part-Full Sun|Moist|12' - 36'|This shrub makes white flowers in groups in spring that give way to berries in autumn that birds feed on. Edible fruit. Attracts butterflies. Throwing Shade
-Shrub|Viburnum nudum|Possumhaw Viburnum|Part-Full Sun|Moist|12' - 36'|Fragrant, white flower clusters emerge in May through June, giving way to berries that ripen from pink to blue-black. Leaves turn a wonderful maroon in the fall. Tolerates wet, boggy soil. Throwing Shade
-Shrub|Viburnum prunifolium|Blackhaw Viburnum|Part-Full Sun|Moist|12' - 15'|This tall, upright shrub can grow in moist conditions, and also tolerates drought. White flowers occur in the spring and lead to dark blue berries that feed wildlife through the winter. Throwing Shade
-Shrub|Viburnum trilobum|Cranberry Viburnum|Part-Full Sun|Moist|12' - 16'|Large hardy shrub blooms white flower clusters in spring. Dark green leaves turn a purple-red in fall along with bright red berries appearing. Edible fruit for humans and birds.
-Shrub|Ilex glabra|Inkberry|Part-Full Sun|Medium|5' - 8'|Evergreen shrub in the Holly family and are attractive in the winter. Female flowers give small berries that birds feast on in winter. Male/Female plants need each other to pollinate. Deer tolerant. Throwing Shade
-Shrub|Ilex verticillata|Winterberry|Part-Full Sun|Medium|3' - 15'|Small, greenish-white flowers emerge in the spring that give way to bright red berries in the summer and persist through the winter to provide food for wildlife. Throwing Shade
-Tree|Acer rubrum|Red Maple|Part-Full Sun|Moist|50' - 100'|This fast growing shade tree has bright red flower clusters and red twigs. Fall foliage can range from brilliant red to yellow. Silvery grey bark is striking in winter. Throwing Shade
-Tree|Acer saccharinum|Silver Maple|Part-Full Sun|Medium|50' - 80'|Fast growing, graceful tree. Does well in poor soil. Drought Tolerant. Throwing Shade
-Tree|Acer saccharum|Northern Sugar Maple|Full-Part Sun|Moist|40' - 120'|Popular shade tree due to a dense spreading crown that provides heavy shade. Grows slowly but matures quicker in open areas. Drooping racemes of yellow flowers in spring make way for winged samaras in summer. Turns warm shades of red, orange and yellow in the fall. Only tree used commercially to make maple syrup. Throwing Shade
-Tree|Aesculus parviflora|Bottlebrush Buckeye|Part-Full Shade|Moist|8' - 12'|Delightful summer blooms of showy, 12 flower clusters of tubular white flowers and bright red anthers. Flowers give way to pear-shaped buckeyes and foliage turns yellow in autumn. Drought and Deer tolerant. Attracts Butterflies
-Tree|Aesculus pavia|Red Eastern Buckeye|Part-Full Sun|Moist|12' - 15'|Bright, red, upright flower clusters bloom in spring, which attract hummingbirds. Buckeyes ripen in the fall. Prefers some afternoon or extra moisture in hot, dry conditions.
-Tree|Amelanchier canadensis|Canadian Serviceberry|Part-Full Sun|Moist|25' - 30'|This small tree blooms its white flowers in early spring, before the leaves emerge. Flowers give way to edible berries, which ripen to red and then dark purple in early summer. Tolerates clay. Throwing Shade
-Tree|Amelanchier laevis|Allegheny Serviceberry|Full-Part Sun|Moist|15' - 25'|Fast growing deciduous tree or shrub in the rose family. Blooms in spring with 5-petaled, white flowers on 4-inch racemes. Purple edible berries mature in June.
-Tree|Asimina triloba|Paw Paw|Part-Full Shade|Moist|15' - 30'|Can spread by suckers to make colonies. Purple flowers in spring give way to our native tropical fruit similar to a banana that feed wildlife and human alike! Plant two for cross-pollination. Throwing Shade
-Tree|Betula lenta|Sweet Birch|Full to Shade|Moist to Medium|60' - 70'|Pyramidal to round shaped large tree. Quick growing. Produce green to yellow gold catkins in spring. In fall light green foliage turns golden yellow. Attracts butterflies, mammals and song birds.
-Tree|Betula nigra|River Birch|Part-Full Sun|Moist|40' - 70'|This fast-growing tree with reddish-brown bark does well in wet soils. It can be grown as a single or multi-trunked tree. Adapts to clay soils and poor drainage. Throwing Shade
-Tree|Betula papyrifera|Paper Birch|Part-Full Sun|Moist|50' - 70'|Quick growing single or multi-stemmed tree noted for its peeling white bark that reveals an orange-brown inner bark. Mature trees develop black markings on the white bark. Produce copper-green catkins in spring. Yellow leaves in fall.
-Tree|Betula populifolia|Grey Birch|Part-Full Sun|Medium|20' - 40'|Deciduous suckering tree that often appears in a multi-trunked form, but can also grow with a single trunk. Distinguishable by its chalky white bark. Yellowish-brown male flowers in single catkins and greenish female flowers in smaller upright catkins in spring.
-Tree|Carpinus caroliniana|Ironwood|Part-Full Shade|Moist|22' - 35'|The smooth, gray trunk of this tree is extremely tough. An excellent understory tree, making its home in woods, valleys, ravine bottoms, and rocky slopes along streams. Throwing Shade
-Tree|Castanea dentata|American Chestnut|Full Sun|Medium|50' - 75'|Despite problems with blight, this tree can easily grow to 35', providing habitat and food for birds and insects. It also shoots out smaller trees that will establish even after the main tree suffers.
-Tree|Castanea pumila|Allegheny Chinquapin|Part-Full Sun|Medium|15' - 30'|This smaller chestnut-tree provides excellent wildlife food and cover. Matures quickly. Throwing Shade
-Tree|Cercis canadensis|Eastern Redbud|Part-Full Shade|Dry|20' - 30'|Pea-like, rose-purple flowers bloom in early spring before the foliage emerges. Flowers give way to flattened seed pods that mature to brown in the summer and can feed wildlife through the winter. Attracts butterflies. Deer, clay soil resistant. Throwing Shade
-Tree|Chionanthus virginicus|Fringe Tree|Part-Full Shade|Moist|12' - 20'|Fragrant, drooping, fringe-like clusters of flowers bloom in spring and female plants give rise to dark, bluish fruits that feed wildlife. Tolerates clay. Throwing Shade
-Tree|Cornus alternifolia|Pagoda Dogwood|Part-Full Shade|Medium|15' - 25'|Striking horizontal layers of branches. Clusters of white flowers adorn this shrub in late spring that produce dark blue fruits in late summer to feed wildlife. Throwing Shade
-Tree|Cornus florida|Flowering Dogwood|Part-Full Shade|Medium|15' - 30'|Virginia’s state tree known for gorgeous white blooms in the spring and bright red leaves in the fall! Throwing Shade
-Tree|Corylus americana|Hazelnut|Part-Full Sun|Medium|10' - 16'|2-3 long flowers emerge in spring; female flowers create small edible nuts in July. Tolerates clay. Throwing Shade
-Tree|Crataegus phaenopyrum|Washington Hawthorn|Full Sun|Moist|12' - 36'|Blooms attract pollinators in the spring and berries feed wildlife through the summer
-Tree|Diospyros virginiana|Persimmon|Part-Full Shade|Medium|35' - 60'|Tall tree with a rounded crown with dark gray bark broken into rectangular blocks. Male and female trees flower in late spring. Fruits mature in fall. Female trees need a male pollinator to fruit. Drought tolerant. Throwing Shade
-Tree|Fagus grandifolia|American Beech|Part-Full Sun|Moist|50' - 80'|An excellent shade tree that needs well-drained soils, the American Beech can form colonies through its root structure. It has distinctive grey, smooth bark with leaves that turn golden in fall. Beechnuts are edible. Deer tolerant. Throwing Shade
-Tree|Franklinia alatamaha|Franklin Tree|Part-Full Shade|Moist|10' - 20'|Camellia-like, cup-shaped, 5-petaled, sweetly-fragrant, white flowers (to 3” diameter) bloom in late summer. Leaves turn quality shades of orange, red and purple in autumn. Found by W. Bartram in 1765 along Georgia's Altamaha River.
-Tree|Gymnocladus dioicus|Kentucky Coffeetree|Full Sun|Moist|60' - 80'|Deciduous tree in the Fabaceae family. Crown grows in an oval, open, to irregular habit. Large pinnately compound leaves that emerge in the late spring as pinkish-bronze and then mature to a bluish-green. Greenish-white flowers appear in late spring to early summer. Leaves turn yellow and female trees boast clusters of large purplish-brown seed pods in fall.
-Tree|Ilex opaca|American Holly|Part-Full Shade|Medium|15' - 30'|Evergreen tree with bright, shiny, pointed leaves and bright red fruits that ripen in the fall that birds feed on. Deer, clay tolerant. Throwing Shade
-Tree|Juglans nigra|Black Walnut|Full Sun|Medium|75' - 100'|Long trunks with sharply ridged, dark bark. Leaves emerge in spring and drop in fall, and are aromatic when crushed. Nuts mature in autumn, falling to the grown where the husks rot away. Throwing Shade
-Tree|Juniperus virginiana|Eastern Red Cedar|Full Sun|Average|30' - 40'|Tough tree that is tolerant of a wide variety of soils and growing conditions. Can grow in soils that few other plants can tolerate. Most drought resistant of any conifer in eastern United States. Beautiful blue-green, overlapping, scale-like leaves. Red-brown bark that peels off in long, narrow strips. Light blue-green clusters of cones mature in late winter or early spring. Throwing Shade
-Tree|Liriodendron tulipifera|Tulip Tree|Full Sun|Moist|80' - 120'|One of the largest trees in North America. Mature trunks reach 4 to 6 feet in diameter and are column-like with an absence of lower branches. Yellow-green and orange tulip-like flowers bloom in Spring. Yellow-gold leaves in fall.
-Tree|Magnolia acuminata|Cucumber Magnolia|Part-Full Sun|Moist|50' - 80'|Deciduous tree found in the foothills and Appalachian Mountains. Tall tree with pyramidal crown and a straight trunk. Bloom greenish-yellow, tulip-like flowers in spring and produce red cone-like fruits in late summer. Throwing Shade
-Tree|Magnolia virginiana|Sweetbay Magnolia|Part-Full Shade|Moist|10' - 35'|Cup shaped, white flowers appear in spring on this magnificent tree. Bright red seeds mature in fall. Tolerates clays. Throwing Shade
-Tree|Morus rubra|Red Mulberry|Part-Full Sun|Medium|35' - 50'|Lobed leaves, milky sap, and reddish-brown bark with edible fruits. Greenish flowers appear in early spring. Fertilized female flowers bear edible reddish fruits. Throwing Shade
-Tree|Nyssa sylvatica|Black Gum|Part-Full Sun|Medium|30' - 50'|Deciduous tree with a straight trunk and rounded crown. Flowers on the female tree give way to half-inch sour fruits. Tolerates both standing water and poorly drained soils and clay. Can also tolerate drought. Throwing Shade
-Tree|Ostrya virginiana|Hop Hornbeam|Part-Full Sun|Medium|25' - 40'|This tree does well in shade and rocky soils. Male and female catkins grow on the same tree, with the female parts turning into small, hop-like fruits in the fall. Also called ironwood. Tolerates Deer and clay. Throwing Shade
-Tree|Oxydendrum arboreum|Sourwood|Full-Part Sun|Moist|20' - 30'|Deciduous, small to medium tree in the blueberry family (Ericaceae). Prefers peaty, moist, well-drained soils. Tolerant of shade and dry soils and moderately tolerant of salt. Fragrant, white, urn-shaped flowers bloom on panicles in summer. Fall foliage is red to reddish-purple.
-Tree|Pinus palustris|Longleaf Pine|Part-Full Sun|Medium|60' - 80'|Scaly orange-brown bark with long, 18 needles and 10 long cones. The tree stays small for the first 5 years of life while it establishes roots, then grows quickly. Throwing Shade
-Tree|Pinus strobus|Eastern White Pine|Full Sun|Medium|50' - 80'|This pine is an attractive oramental landscape tree with bluish-green needles and cylindrical brown cones. Attractive to wildlife. Deer resistant. Throwing Shade
-Tree|Pinus taeda|Loblolly Pine|Full Sun|Moist|60' - 90'|Needled evergreen. Somewhat pyramidal shaped at youth, develops a dense oval crown at maturity as it loses its lower branches. Bark made up of thick flaky plates that are chocolate colored underneath. Produce, red-yellow male cones and yellow -purple female cones in spring. Throwing Shade
-Tree|Pinus virginiana|Virginia Pine|Full Sun|Medium|15' - 30'|This needled evergreen is known for it's golden winter foliage. Seeds are a good food source for birds. Throwing Shade
-Tree|Platanus occidentalis|Sycamore|Full Sun|Moist|75' - 100'|Massive, eastern tree does well in wet soils near streams and floodplains. Dry, mottled white bark is striking and beautiful. Throwing Shade
-Tree|Prunus americana|American Plum|Part-Full Sun|Medium|10' - 20'|Small deciduous tree or sometimes multi-stemmed shrub. Blooms small white flowers in early spring before foliage. Produces edible plums in late summer. Grows in rocky sandy soils. Throwing Shade
-Tree|Prunus maritima|Beach Plum|Full Sun|Medium|6' - 12'|White flowers in spring give way to dull 1 purple, edible fruits.
-Tree|Prunus serotina|Black Cherry|Full Sun|Medium|60' - 80'|Fragrant white flowers in spring give way to small red cherries that ripen in late summer. Fruits inedible off tree but can be used to make jams and jellies. Attracts birds. Throwing Shade
-Tree|Prunus virginiana|Chokecherry|Full Sun|Moist|20' - 30'|Large native deciduous shrub or a small tree that can form thickets. Blooms white flowers in spring and bitter red fruits that ripen to black from August to September. Can be made into edible preserves. Attracts small animals and birds that eat the fruits/seeds. Flowers attract pollinators.
-Tree|Quercus alba|White Oak|Full Sun|Medium|50' - 80'|Oval acorns feed wildlife and this large tree provides habitat for birds and shade for humans. Massive, reddish crown adds beauty in the season. Drought and poor soil tolerant. Throwing Shade
-Tree|Quercus bicolor|Swamp White Oak|Full Sun|Moist|50' - 60'|Large long living tree with a short trunk and spreading oval crown. Leaves are a glossy dark green on top and a silvery white underneath. Blooms golden green catkins in spring. Leaves turn gorgeous fall colors of gold, red and yellow.
-Tree|Quercus macrocarpa|Bur Oak|Full Sun|Medium|60' - 80'|The massive Bur Oak can adapt to a wide range of soils. Acorns give name to the tree with the bur near the rim.
-Tree|Quercus palustris|Pin Oak|Full Sun|Moist|50' - 70'|Broad, pyramidal crown with lower branches that often die off, leaving pin-like stubs. Acorns feed wildlife and leaves turn deep red in the fall. Throwing Shade
-Tree|Quercus phellos|Willow Oak|Part-Full Sun|Medium|40' - 75'|Rounded crown. Leaves turn a coppery orange in the fall. Acorns feed wildlife once the tree matures. Adapted to grow in clay soils. Common landscape tree used for shade. Throwing Shade
-Tree|Quercus prinus|Chestnut Oak|Full Sun|Medium|50' - 70'|Large native deciduous tree in the white oak family. Often found growing in poor, dry and rocky soils. Does best in well-drained loams. Separate male and female flowers appear in spring. Large acorns produced in fall that have wildlife value for birds and mammals. Frequently used as a shade tree.
-Tree|Quercus rubra|Northern Red Oak|Full Sun|Medium|50' - 75'|Dark green leaves turn brownish-red in fall. Acorns will feed wildlife once tree is mature enough. Drought tolerant. Throwing Shade
-Tree|Quercus velutina|Black Oak|Full Sun|Medium|50' - 60'|A medium-sized tree for large yards. Bark is nearly all black on mature trees with deep furrows. Oval acorns feed wildlife. Throwing Shade
-Tree|Salix nigra|Black Willow|Part-Full Sun|Wet|36' - 72'|Deciduous fast growing tree prefers moist soils and full sun. Dark brown to black bark, develops deep groves and rough texture with shaggy scales as it ages. Avoid full shade and do not alloy soil to dry out. Throwing Shade
-Tree|Sassafras albidum|Sassafras|Part-Full Shade|Moist|30' - 60'|Root suckers can make this form multiple trunks and colonies. The leaves turn yellow, purple, and red in the fall. Deer, drought, and clay tolerant. Throwing Shade
-Tree|Taxodium distichum|Bald Cypress|Full Sun|Wet|50' - 70'|Long lived conifer native to swamps, but also grows well in upland soils. Buttressed bases with knobby knees that arise out of standing water. Clay and wet soil tolerant. Throwing Shade
-Vine|Clematis occidentalis|Purple Clematis|Full to Partial|Medium to Medium-Dry|3' - 6'|Trailing vine that blooms lavender purple to pinkish grey showy flowers.
-Vine|Clematis virginiana|Virgin's Bower|Part-Full Sun|Moist|15' - 20'|This vine blooms can grow to 20' tall with support; without it will spread as a ground cover. White flowers in spires are fragrant and bloom in fall which give way to plumes of seed heads. Can spread aggressively.
-Vine|Lonicera sempervirens|Coral Honeysuckle|Part-Full Sun|Medium|8' - 15'|This vine creates beautiful red, cone-shaped flowers tipped with orange bloom in spring in small clusters that attract hummingbirds and butterflies. Tolerates clay soil.
-Vine|Passiflora incarnata|Purple Passion Flower|Part-Full Sun|Medium|6' - 8'|Fast growing climbing vine blooms fragrant showy flowers in the summer. Roots appreciate loose mulch and spread by root suckers. Edible fruit appears in July and mature in fall where it can be eaten off vine or made into jelly. Drought tolerant.
-</script>
+
 
 <script>
     // 1. Read the embedded database
-    const rawText = document.getElementById('database').textContent.trim();
+// We will store the data globally once it loads
+let plantData = [];
+
+// 1. Fetch the CSV file from your server
+async function loadDatabase() {
+    try {
+        // Change this filename if you name your file something else!
+        const response = await fetch('Spinfo_20260521.csv'); 
+        const csvText = await response.text();
+        
+        processCSV(csvText);
+    } catch (error) {
+        console.error("Error loading the plant database:", error);
+        document.getElementById('grid').innerHTML = "<p>Sorry, the plant database is currently updating. Please check back in a moment!</p>";
+    }
+}
+
+// 2. A robust CSV parser to handle commas inside your descriptions
+function parseCSV(str) {
+    const arr = [];
+    let quote = false;
+    let row = 0, col = 0;
+    for (let c = 0; c < str.length; c++) {
+        let cc = str[c], nc = str[c+1];
+        arr[row] = arr[row] || [];
+        arr[row][col] = arr[row][col] || '';
+        
+        if (cc === '"' && quote && nc === '"') { arr[row][col] += cc; ++c; continue; }
+        if (cc === '"') { quote = !quote; continue; }
+        if (cc === ',' && !quote) { ++col; continue; }
+        if (cc === '\r' && nc === '\n' && !quote) { ++row; col = 0; ++c; continue; }
+        if (cc === '\n' && !quote) { ++row; col = 0; continue; }
+        if (cc === '\r' && !quote) { ++row; col = 0; continue; }
+        
+        arr[row][col] += cc;
+    }
+    return arr;
+}
+
+// 3. Convert the CSV into our app's format
+function processCSV(csvText) {
+    const data = parseCSV(csvText);
+    const headers = data[0].map(h => h.trim());
+    const nonPlantCategories = ['Books', 'Services', 'Gift Card', 'Stickers', 'Supplies', 'Blank'];
     
+    plantData = [];
+    
+    for (let i = 1; i < data.length; i++) {
+        if (data[i].length < 5) continue; 
+        
+        let obj = {};
+        headers.forEach((h, index) => {
+            obj[h] = data[i][index] ? data[i][index].trim() : '';
+        });
+
+        // Skip non-plants
+        if (!obj['Category'] || nonPlantCategories.includes(obj['Category'])) continue;
+
+        plantData.push({
+            cat: obj['Category'].replace('_MF', ''),
+            s: obj['Scientific Name'],
+            c: obj['Common Name'],
+            l: obj['Light'] || '',
+            m: obj['Moisture'] || '',
+            h: obj['Size_Concat'] ? obj['Size_Concat'].split(';')[0].replace('Height:', '').trim() : '',
+            d: obj['DescriptionBase'] || '',
+            // If you add an "Inventory" column to your CSV later, you can map it here!
+            inv: obj['Inventory'] ? parseInt(obj['Inventory'], 10) : 1 
+        });
+    }
+    
+    init(); // Setup the dropdowns now that data is loaded
+}
+
+// Run the fetch command as soon as the page loads
+loadDatabase();
+
+// ... Keep your existing update() and init() functions right below this ...    
     // 2. Parse the pipe-delimited data
     const plantData = rawText.split('\n').filter(line => line.trim().length > 0).map(line => {
         const p = line.split('|');
@@ -386,46 +143,64 @@ Vine|Passiflora incarnata|Purple Passion Flower|Part-Full Sun|Medium|6' - 8'|Fas
     });
 
     // 3. Update the UI based on filters
-    function update() {
-        const search = document.getElementById('search').value.toLowerCase();
-        const cat = document.getElementById('fCat').value;
-        const light = document.getElementById('fLight').value;
-        const moist = document.getElementById('fMoist').value;
+ // Live Inventory Data consolidated from Seven Bends
+const inventoryData = {
+    "baptisia australis": 637, "symphyotrichum novae-angliae": 425, "eurybia macrophylla": 386, "monarda fistulosa": 339, "carex appalachica": 335, "carex radiata": 322, "penstemon hirsutus": 299, "symphyotrichum cordifolium": 249, "pycnanthemum virginianum": 239, "monarda punctata": 239, "danthonia spicata": 214, "oligoneuron rigidum": 211, "sporobolus heterolepis": 208, "eutrochium fistulosum": 207, "agastache scrophulariifolia": 206, "carex amphibola": 186, "monarda didyma": 185, "elymus virginicus": 184, "silene virginica": 183, "aquilegia canadensis": 178, "carex plantaginea": 174, "bouteloua curtipendula": 169, "vernonia gigantea": 160, "symphyotrichum oblongifolium": 158, "crataegus phaenopyrum": 151, "packera aurea": 148, "eupatorium hyssopifolium": 147, "pycnanthemum tenuifolium": 143, "aster puniceus": 139, "spiraea latifolia": 139, "ruellia humilis": 138, "polemonium reptans": 137, "tiarella cordifolia": 136, "heliopsis helianthoides": 133, "opuntia humifusa": 133, "baptisia tinctoria": 126, "coreopsis tripteris": 125, "blephilia ciliata": 119, "elymus hystrix": 118, "euthamia graminifolia": 117, "magnolia virginiana": 117, "aronia melanocarpa": 111, "iris versicolor": 109, "ageratina altissima": 108, "antennaria parlinii": 106, "solidago speciosa": 106, "asclepias tuberosa": 105, "allium cernuum": 105, "sedum pulchellum": 103, "pycnanthemum muticum": 100, "sorghastrum nutans": 97, "solidago juncea": 93, "quercus rubra": 92, "coreopsis lanceolata": 90, "morella pensylvanica": 90, "chionanthus virginicus": 87, "verbena hastata": 87, "salvia lyrata": 81, "prunus angustifolia": 81, "quercus palustris": 80, "eupatorium perfoliatum": 78, "platanus occidentalis": 78, "zizia aurea": 77, "chasmanthium latifolium": 77, "parathelypteris noveboracensis": 73, "scirpus atrovirens": 72, "ilex verticillata": 71, "mimulus ringens": 70, "sambucus canadensis": 70, "parthenium integrifolium": 69, "senna hebecarpa": 66, "quercus alba": 64, "rudbeckia fulgida": 63, "cornus racemosa": 62, "adiantum pedatum": 62, "heuchera villosa": 61, "geranium maculatum": 60, "aronia arbutifolia": 53, "quercus macrocarpa": 53, "athyrium filix-femina": 53, "polystichum acrostichoides": 52, "scirpus cyperinus": 52, "viburnum trilobum": 51, "cornus amomum": 51, "amorpha fruticosa": 51, "clethra alnifolia": 51, "carex flaccosperma": 50, "helianthus angustifolius": 48, "juniperus virginiana": 47, "zizia aptera": 46, "viburnum lentago": 45, "asclepias verticillata": 45, "tradescantia virginiana": 45, "eryngium yuccifolium": 43, "prunus americana": 43, "andropogon gerardii": 42, "viburnum dentatum": 41, "dryopteris marginalis": 41, "carex blanda": 41, "castanea pumila": 39, "cephalanthus occidentalis": 37, "amelanchier laevis": 37, "hypericum prolificum": 37, "osmunda spectabilis": 36, "acorus americanus": 36, "salix discolor": 34, "asimina triloba": 34, "acer rubrum": 32, "euonymus americanus": 31, "coreopsis verticillata": 30, "erigeron pulchellus": 30, "eupatorium purpureum": 30, "phlox divaricata": 28, "corylus americana": 27, "eragrostis spectabilis": 26, "solidago caesia": 26, "ruellia strepens": 26, "quercus bicolor": 26, "betula nigra": 24, "panicum virgatum": 22, "rhus typhina": 21, "ludwigia alternifolia": 21, "rudbeckia laciniata": 21, "oxydendrum arboreum": 21, "gymnocladus dioicus": 21, "onoclea sensibilis": 21, "hydrangea arborescens": 20, "magnolia tripetala": 20, "betula populifolia": 19, "carpinus caroliniana": 18, "lobelia cardinalis": 18, "dodecatheon amethystinum": 18, "diospyros virginiana": 18, "fagus grandifolia": 17, "hamamelis virginiana": 16, "ilex glabra": 16, "matteuccia struthiopteris": 15, "iris cristata": 15, "ceanothus americanus": 15, "filipendula rubra": 15, "lobelia siphilitica": 15, "delphinium exaltatum": 15, "chelone glabra": 15, "caltha palustris": 15, "asclepias exaltata": 15, "hibiscus laevis": 15, "quercus prinoides": 15, "nyssa sylvatica": 15, "itea virginica": 15, "rhus aromatica": 13, "clematis virginiana": 12, "solidago flexicaulis": 12, "antennaria neglecta": 12, "helenium autumnale": 12, "antennaria plantaginifolia": 12, "quercus prinus": 12, "amelanchier canadensis": 10, "veronicastrum virginicum": 10, "acer saccharum": 10, "physocarpus opulifolius": 10, "silene caroliniana": 8, "baccharis halimifolia": 8, "symphoricarpos albus": 8, "ostrya virginiana": 8, "phlox paniculata": 7, "smallanthus uvedalius": 6, "solidago canadensis": 6, "solidago odora": 6, "acer pensylvanicum": 6, "viburnum prunifolium": 5, "viburnum nudum": 5, "staphylea trifolia": 5, "juglans nigra": 5, "quercus phellos": 5, "cornus florida": 5, "carex pensylvanica": 4, "rhododendron arborescens": 4, "vaccinium corymbosum": 4, "rosa carolina": 4, "pinus strobus": 4, "cercis canadensis": 4, "trillium grandiflorum": 3, "vernonia noveboracensis": 3, "alnus serrulata": 3, "rosa palustris": 3, "callicarpa americana": 3, "franklinia alatamaha": 3, "prunus serotina": 3, "castanea dentata": 3, "aristolochia tomentosa": 3, "dennstaedtia punctilobula": 2, "osmunda cinnamomea": 2, "liriodendron tulipifera": 2, "betula papyrifera": 2, "acer saccharinum": 2, "viburnum acerifolium": 1, "myrica cerifera": 1
+};
 
-        const filtered = plantData.filter(p => {
-            const matchesSearch = p.c.toLowerCase().includes(search) || p.s.toLowerCase().includes(search) || p.d.toLowerCase().includes(search);
-            const matchesCat = cat === 'all' || p.cat === cat;
-            const matchesLight = light === 'all' || p.l.includes(light);
-            const matchesMoist = moist === 'all' || p.m.includes(moist);
-            return matchesSearch && matchesCat && matchesLight && matchesMoist;
-        });
+function update() {
+    const s = document.getElementById('search').value.toLowerCase();
+    const c = document.getElementById('fCat').value;
+    const l = document.getElementById('fLight').value;
+    const m = document.getElementById('fMoist').value;
+    const inStock = document.getElementById('fStock').checked;
 
-        document.getElementById('count').innerText = filtered.length;
-        const grid = document.getElementById('grid');
-        
-        grid.innerHTML = filtered.map(p => {
-            // Check if the description includes the discount trigger
-            const isEligible = p.d.includes('Throwing Shade');
-            // Clean the description to remove the raw "Throwing Shade" text if present
-            const cleanDesc = p.d.replace('Throwing Shade', '').trim();
+    // Map inventory data to the main plant list dynamically
+    const enrichedData = plantData.map(p => {
+        const sciNameLower = p.s.toLowerCase().trim();
+        p.inv = inventoryData[sciNameLower] || 0;
+        return p;
+    });
 
-            return `
-            <div class="card">
-                <div class="card-inner">
-                    <p class="common-name">${p.c}</p>
-                    <span class="sci-name">${p.s}</span>
-                    <div class="tags">
-                        <span class="tag">${p.cat}</span>
-                        <span class="tag">${p.l}</span>
-                        <span class="tag">${p.m}</span>
-                        <span class="tag">Height: ${p.h}</span>
-                    </div>
-                    <p class="desc">${cleanDesc}</p>
+    const filtered = enrichedData.filter(p => {
+        const sMatch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
+        const cMatch = c === 'all' || p.cat === c;
+        const lMatch = l === 'all' || p.l.includes(l);
+        const mMatch = m === 'all' || p.m.includes(m);
+        const stockMatch = !inStock || p.inv > 0;
+        return sMatch && cMatch && lMatch && mMatch && stockMatch;
+    });
+
+    // Sort by inventory count (highest first)
+    filtered.sort((a, b) => b.inv - a.inv);
+
+    document.getElementById('count').innerText = filtered.length;
+    const grid = document.getElementById('grid');
+    grid.innerHTML = filtered.map(p => {
+        const isEligible = p.d.includes('Throwing Shade');
+        const cleanDesc = p.d.replace('Throwing Shade', '').trim();
+        const invTagHtml = p.inv > 0 
+            ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
+            : `<span class="tag inv-out">❌ Out of stock</span>`;
+
+        return `
+        <div class="card">
+            <div class="card-inner">
+                <p class="common-name">${p.c}</p>
+                <span class="sci-name">${p.s}</span>
+                <div class="tags">
+                    ${invTagHtml}
+                    <span class="tag">${p.cat}</span>
+                    <span class="tag">${p.l}</span>
+                    <span class="tag">${p.m}</span>
+                    <span class="tag">Height: ${p.h}</span>
                 </div>
-                ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
-            </div>`
-        }).join('');
-    }
+                <p class="desc">${cleanDesc}</p>
+            </div>
+            ${isEligible ? `<div class="promo">Eligible for $25 Throwing Shade VA Discount</div>` : ''}
+        </div>`
+    }).join('');
+}
 
     // 4. Setup dropdown filters dynamically based on the dataset
     function init() {
