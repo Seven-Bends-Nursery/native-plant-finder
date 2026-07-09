@@ -9,6 +9,11 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 1250px; margin: 0 auto; }
         header { background: var(--dark-green); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
+        
+        /* New Webstore Link Button Styling */
+        .store-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: white; color: var(--dark-green); text-decoration: none; font-weight: bold; border-radius: 25px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .store-link:hover { background: #e8f5e9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        
         .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
                     display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
                     margin-bottom: 25px; position: sticky; top: 10px; z-index: 1000; border: 1px solid #ddd; }
@@ -40,8 +45,10 @@
 <body>
 <div class="container">
     <header>
-        <h1>Plant Ridge & Valley Natives</h1>
-        <p>Live Inventory & Native Plant Database</p>
+        <h1>Seven Bends Nursery</h1>
+        <p>Native Plant Database & Inventory</p>
+        <p>Visit the nursery or our webstore for the most up-to-date inventory</p>
+        <a href="https://sevenbendsnurserystore.square.site/" target="_blank" class="store-link">Shop the Seven Bends Webstore</a>
     </header>
     <div class="controls">
         <div class="group"><label>Search Plants</label><input type="text" id="search" placeholder="Name or keyword..."></div>
@@ -61,8 +68,6 @@
 </div>
 
 <script>
-
-    // Variable names have been updated to prevent cache conflicts
     let appPlantData = [];
     let appInventoryMap = {};
 
@@ -115,7 +120,6 @@
         const data = parseCSV(csvText);
         if (data.length < 2) return;
 
-        // Strip invisible BOM characters and quotes that break the mapping
         const headers = data[0].map(h => h.trim().replace(/^\uFEFF/, '').replace(/"/g, ''));
         
         const nameIdx = headers.findIndex(h => h === 'Item.Name' || h === 'Item Name');
@@ -141,7 +145,6 @@
 
     function processSpinfo(csvText) {
         const data = parseCSV(csvText);
-        // Strip invisible BOM characters and quotes
         const headers = data[0].map(h => h.trim().replace(/^\uFEFF/, '').replace(/"/g, ''));
         const nonPlantCategories = ['Books', 'Services', 'Gift Card', 'Stickers', 'Supplies', 'Blank'];
         
@@ -191,7 +194,6 @@
             return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesStock;
         });
 
-        // Sort by inventory first, then alphabetically
         filtered.sort((a, b) => {
             if (b.inv !== a.inv) return b.inv - a.inv;
             return a.c.localeCompare(b.c);
