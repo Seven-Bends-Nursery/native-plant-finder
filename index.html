@@ -234,8 +234,9 @@
         
         appPlantData.forEach(p => {
             cats.add(p.cat);
-            p.l.split(/,|to|-/).forEach(v => { if (v.trim()) lights.add(v.trim()) });
-            p.m.split(/,|to|-/).forEach(v => { if (v.trim()) moists.add(v.trim()) });
+            // Now it will ONLY separate items if there is a comma
+            p.l.split(',').forEach(v => { if (v.trim()) lights.add(v.trim()) });
+            p.m.split(',').forEach(v => { if (v.trim()) moists.add(v.trim()) });
         });
 
         const populate = (id, set) => {
