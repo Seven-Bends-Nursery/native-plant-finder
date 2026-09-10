@@ -75,8 +75,8 @@
     async function loadDatabases() {
         try {
             const [spinfoRes, squareRes] = await Promise.all([
-                fetch('Spinfo_20260521.csv'),
-                fetch('SquareExport_catalog-2026-07-10.csv') 
+                fetch('Spinfo_20260822.csv'),
+                fetch('SquareExport_catalog-2026-09-10.csv') 
             ]);
 
             if (!spinfoRes.ok || !squareRes.ok) {
