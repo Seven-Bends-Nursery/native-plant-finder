@@ -22,9 +22,9 @@
 
 #IMPORTANT: 
 #Update files here:
-Lines 92-93
-fetch('Spinfo_20260521.csv'),
-fetch('SquareExport_catalog-2026-07-09.csv') 
+Lines 107-108
+fetch('Spinfo_20260822.csv'),
+fetch('SquareExport_catalog-2026-09-10.csv') 
 
 #Adding Test Code
 #Open your index.html file in GitHub and click the pencil icon to edit it. Scroll all the way down to where the <script> tag starts, and add a single alert line right below it, like this:
