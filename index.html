@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virginia Native Plant Finder & Inventory</title>
+    <title>Mid-Atlantic Native Plants - Seven Bends Nursery</title>
     <style>
-        :root { --dark-green: #1b3022; --leaf: #4a6741; --bg: #f9fbf9; }
+        /* Updated Color Scheme to Seven Bends Blue */
+        :root { --brand-blue: #093a6d; --accent-blue: #1b5b9e; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 1250px; margin: 0 auto; }
-        header { background: var(--dark-green); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
         
-        .store-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: white; color: var(--dark-green); text-decoration: none; font-weight: bold; border-radius: 25px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .store-link:hover { background: #e8f5e9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        /* Header Styling */
+        header { background: var(--brand-blue); color: white; padding: 30px 20px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
+        .header-logo { max-width: 280px; height: auto; margin-bottom: 10px; }
+        header h1 { margin: 0 0 5px 0; font-size: 2rem; }
+        header p { margin: 0 0 20px 0; font-size: 1.1rem; opacity: 0.9; }
         
+        .header-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .store-link { display: inline-block; padding: 10px 20px; background: white; color: var(--brand-blue); text-decoration: none; font-weight: bold; border-radius: 25px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .store-link:hover { background: #e6f0fa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        
+        /* Filters */
         .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
                     display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
                     margin-bottom: 25px; position: sticky; top: 10px; z-index: 1000; border: 1px solid #ddd; }
         .group { display: flex; flex-direction: column; flex: 1; min-width: 160px; }
-        label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark-green); }
+        label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--brand-blue); }
         select, input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
         
         /* Checkbox Toggles */
@@ -27,19 +35,22 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--leaf); }
+        input:checked + .slider { background-color: var(--accent-blue); }
         input:checked + .slider:before { transform: translateX(22px); }
-        .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
+        .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--brand-blue); cursor: pointer; }
         
-        .stats { font-weight: bold; margin-bottom: 15px; color: var(--leaf); font-size: 1.1rem; }
+        /* Grid & Cards */
+        .stats { font-weight: bold; margin-bottom: 15px; color: var(--brand-blue); font-size: 1.1rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
         .card-inner { padding: 18px; flex-grow: 1; }
-        .common-name { font-size: 1.25rem; font-weight: bold; color: var(--dark-green); margin: 0; }
+        .common-name { font-size: 1.25rem; font-weight: bold; color: var(--brand-blue); margin: 0; }
         .sci-name { font-style: italic; color: #666; font-size: 0.85rem; margin-bottom: 15px; display: block; }
+        
+        /* Tags */
         .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-        .tag { background: #f0f4ef; color: var(--leaf); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
+        .tag { background: #eef4fa; color: var(--brand-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #c2dcf0; }
         .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.85rem; }
         .inv-out { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
         .deer-tag { background: #fef08a; color: #854d0e; border-color: #fde047; }
@@ -49,9 +60,13 @@
 <body>
 <div class="container">
     <header>
-        <h1>Plant Ridge & Valley Natives</h1>
-        <p>Live Inventory & Native Plant Database</p>
-        <a href="https://sevenbendsnurserystore.square.site/" target="_blank" class="store-link">Shop the Seven Bends Webstore</a>
+        <img src="SevenBends_FullLogo_White_Vector.svg" alt="Seven Bends Nursery Logo" class="header-logo">
+        <h1>Mid-Atlantic Native Plants</h1>
+        <p>Inventory for Seven Bends Nursery</p>
+        <div class="header-links">
+            <a href="https://www.sevenbends.org" target="_blank" class="store-link">Visit Our Website</a>
+            <a href="https://sevenbendsnurserystore.square.site/" target="_blank" class="store-link">Shop the Webstore</a>
+        </div>
     </header>
     <div class="controls">
         <div class="group"><label>Search</label><input type="text" id="search" placeholder="Name or keyword..."></div>
@@ -90,7 +105,7 @@
         try {
             const [spinfoRes, squareRes] = await Promise.all([
                 fetch('Spinfo_20260822.csv'), 
-                fetch('SquareExport_catalog-2026-09-10.csv') 
+                fetch('SquareExport_catalog-2026-07-09.csv') 
             ]);
 
             if (!spinfoRes.ok || !squareRes.ok) {
