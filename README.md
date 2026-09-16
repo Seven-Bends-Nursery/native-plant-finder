@@ -21,7 +21,7 @@
 
 #IMPORTANT: 
 #Update files here:
-Lines 77-79
+Lines 92-93
 fetch('Spinfo_20260521.csv'),
 fetch('SquareExport_catalog-2026-07-09.csv') 
 
