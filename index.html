@@ -10,24 +10,27 @@
         .container { max-width: 1250px; margin: 0 auto; }
         header { background: var(--dark-green); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; }
         
-        /* New Webstore Link Button Styling */
         .store-link { display: inline-block; margin-top: 15px; padding: 10px 20px; background: white; color: var(--dark-green); text-decoration: none; font-weight: bold; border-radius: 25px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .store-link:hover { background: #e8f5e9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
         
         .controls { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
                     display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
                     margin-bottom: 25px; position: sticky; top: 10px; z-index: 1000; border: 1px solid #ddd; }
-        .group { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
+        .group { display: flex; flex-direction: column; flex: 1; min-width: 160px; }
         label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark-green); }
         select, input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
-        .toggle-container { display: flex; align-items: center; gap: 10px; min-width: 150px; padding-bottom: 10px; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        
+        /* Checkbox Toggles */
+        .toggles-wrapper { display: flex; flex-direction: column; gap: 10px; min-width: 150px; padding-bottom: 5px;}
+        .toggle-container { display: flex; align-items: center; gap: 10px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--leaf); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        input:checked + .slider:before { transform: translateX(22px); }
         .toggle-label { font-size: 0.9rem; font-weight: bold; color: var(--dark-green); cursor: pointer; }
+        
         .stats { font-weight: bold; margin-bottom: 15px; color: var(--leaf); font-size: 1.1rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -39,29 +42,40 @@
         .tag { background: #f0f4ef; color: var(--leaf); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #dce6db; }
         .inv-tag { background: #dcfce7; color: #166534; border-color: #bbf7d0; font-size: 0.85rem; }
         .inv-out { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+        .deer-tag { background: #fef08a; color: #854d0e; border-color: #fde047; }
         .promo { background: #fff8e1; color: #856404; padding: 10px; font-size: 0.75rem; text-align: center; font-weight: bold; border-top: 1px solid #ffeeba; }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>Seven Bends Nursery</h1>
-        <p>Native Plant Database & Inventory</p>
-        <p>Visit the nursery or our webstore for the most up-to-date inventory</p>
+        <h1>Plant Ridge & Valley Natives</h1>
+        <p>Live Inventory & Native Plant Database</p>
         <a href="https://sevenbendsnurserystore.square.site/" target="_blank" class="store-link">Shop the Seven Bends Webstore</a>
-        <a href="https://www.sevenbends.org/" target="_blank" class="store-link">Our Full Website!</a>        
     </header>
     <div class="controls">
-        <div class="group"><label>Search Plants</label><input type="text" id="search" placeholder="Name or keyword..."></div>
+        <div class="group"><label>Search</label><input type="text" id="search" placeholder="Name or keyword..."></div>
         <div class="group"><label>Category</label><select id="fCat"><option value="all">All Categories</option></select></div>
-        <div class="group"><label>Light Requirement</label><select id="fLight"><option value="all">Any Light</option></select></div>
-        <div class="group"><label>Moisture Need</label><select id="fMoist"><option value="all">Any Moisture</option></select></div>
-        <div class="toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="fStock" checked>
-                <span class="slider"></span>
-            </label>
-            <label for="fStock" class="toggle-label">In Stock Only</label>
+        <div class="group"><label>Light</label><select id="fLight"><option value="all">Any Light</option></select></div>
+        <div class="group"><label>Moisture</label><select id="fMoist"><option value="all">Any Moisture</option></select></div>
+        <div class="group"><label>Bloom Color</label><select id="fColor"><option value="all">Any Color</option></select></div>
+        <div class="group"><label>Bloom Time</label><select id="fTime"><option value="all">Any Time</option></select></div>
+        
+        <div class="toggles-wrapper">
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="fStock" checked>
+                    <span class="slider"></span>
+                </label>
+                <label for="fStock" class="toggle-label">In Stock Only</label>
+            </div>
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="fDeer">
+                    <span class="slider"></span>
+                </label>
+                <label for="fDeer" class="toggle-label">Deer Resistant</label>
+            </div>
         </div>
     </div>
     <div class="stats" id="statusMessage">Loading databases...</div>
@@ -75,8 +89,8 @@
     async function loadDatabases() {
         try {
             const [spinfoRes, squareRes] = await Promise.all([
-                fetch('Spinfo_20260822.csv'),
-                fetch('SquareExport_catalog-2026-09-10.csv') 
+                fetch('Spinfo_20260822.csv'), 
+                fetch('SquareExport_catalog-2026-07-09.csv') 
             ]);
 
             if (!spinfoRes.ok || !squareRes.ok) {
@@ -122,14 +136,10 @@
         if (data.length < 2) return;
 
         const headers = data[0].map(h => h.trim().replace(/^\uFEFF/, '').replace(/"/g, ''));
-        
         const nameIdx = headers.findIndex(h => h === 'Item.Name' || h === 'Item Name');
         const qtyIdx = headers.findIndex(h => h.includes('Current Quantity') || h.includes('Current.Quantity'));
 
-        if (nameIdx === -1 || qtyIdx === -1) {
-            console.error("Could not find the 'Item Name' or 'Quantity' columns in the Square CSV.");
-            return;
-        }
+        if (nameIdx === -1 || qtyIdx === -1) return;
 
         for (let i = 1; i < data.length; i++) {
             if (data[i].length <= Math.max(nameIdx, qtyIdx)) continue;
@@ -164,13 +174,37 @@
             let sciNameLower = (obj['Scientific Name'] || '').trim().toLowerCase();
             let currentInv = appInventoryMap[sciNameLower] || 0;
 
+            // Robust logic for Height
+            let hStr = '';
+            let hLow = obj['Height_low'];
+            let hHigh = obj['Height_high'];
+            if (hLow && hHigh && hLow !== hHigh) {
+                hStr = `${hLow}' - ${hHigh}'`;
+            } else if (hLow || hHigh) {
+                hStr = `${hLow || hHigh}'`;
+            }
+
+            // Robust logic for Width
+            let wStr = '';
+            let wLow = obj['Width_low'];
+            let wHigh = obj['Width_high'];
+            if (wLow && wHigh && wLow !== wHigh) {
+                wStr = `${wLow}' - ${wHigh}'`;
+            } else if (wLow || wHigh) {
+                wStr = `${wLow || wHigh}'`;
+            }
+
             appPlantData.push({
                 cat: obj['Category'].replace('_MF', ''),
                 s: obj['Scientific Name'],
                 c: obj['Common Name'],
                 l: obj['Light'] || '',
                 m: obj['Moisture'] || '',
-                h: obj['Size_Concat'] ? obj['Size_Concat'].split(';')[0].replace('Height:', '').trim() : '',
+                h: hStr,
+                w: wStr,
+                bt: obj['Bloom_time'] || '',
+                bc: obj['Bloom_color'] || '',
+                dr: obj['Deer_Resistance'] || '',
                 d: obj['DescriptionBase'] || '',
                 inv: currentInv
             });
@@ -184,15 +218,22 @@
         const c = document.getElementById('fCat').value;
         const l = document.getElementById('fLight').value;
         const m = document.getElementById('fMoist').value;
+        const color = document.getElementById('fColor').value;
+        const time = document.getElementById('fTime').value;
         const inStock = document.getElementById('fStock').checked;
+        const deerReq = document.getElementById('fDeer').checked;
 
         const filtered = appPlantData.filter(p => {
             const matchesSearch = p.c.toLowerCase().includes(s) || p.s.toLowerCase().includes(s) || p.d.toLowerCase().includes(s);
             const matchesCat = c === 'all' || p.cat === c;
             const matchesLight = l === 'all' || p.l.includes(l);
             const matchesMoist = m === 'all' || p.m.includes(m);
+            const matchesColor = color === 'all' || p.bc.includes(color);
+            const matchesTime = time === 'all' || p.bt.includes(time);
             const matchesStock = !inStock || p.inv > 0;
-            return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesStock;
+            const matchesDeer = !deerReq || p.dr.toLowerCase() === 'y';
+            
+            return matchesSearch && matchesCat && matchesLight && matchesMoist && matchesColor && matchesTime && matchesStock && matchesDeer;
         });
 
         filtered.sort((a, b) => {
@@ -207,9 +248,19 @@
         grid.innerHTML = filtered.map(p => {
             const isEligible = p.d.includes('Throwing Shade');
             const cleanDesc = p.d.replace('Throwing Shade', '').trim();
+            
             const invTagHtml = p.inv > 0 
                 ? `<span class="tag inv-tag">✅ ${p.inv} in stock</span>` 
                 : `<span class="tag inv-out">❌ Out of stock</span>`;
+            
+            const deerTagHtml = p.dr.toLowerCase() === 'y' 
+                ? `<span class="tag deer-tag">🦌 Deer Resistant</span>` 
+                : '';
+
+            let bloomHtml = '';
+            if (p.bt && p.bc) bloomHtml = `<span class="tag">🌸 ${p.bc} (${p.bt})</span>`;
+            else if (p.bt) bloomHtml = `<span class="tag">🌸 ${p.bt}</span>`;
+            else if (p.bc) bloomHtml = `<span class="tag">🌸 ${p.bc}</span>`;
 
             return `
             <div class="card">
@@ -219,9 +270,12 @@
                     <div class="tags">
                         ${invTagHtml}
                         <span class="tag">${p.cat}</span>
-                        <span class="tag">${p.l}</span>
-                        <span class="tag">${p.m}</span>
-                        ${p.h ? `<span class="tag">Height: ${p.h}</span>` : ''}
+                        <span class="tag">☀️ ${p.l}</span>
+                        <span class="tag">💧 ${p.m}</span>
+                        ${p.h ? `<span class="tag">↕️ H: ${p.h}</span>` : ''}
+                        ${p.w ? `<span class="tag">↔️ W: ${p.w}</span>` : ''}
+                        ${bloomHtml}
+                        ${deerTagHtml}
                     </div>
                     <p class="desc">${cleanDesc}</p>
                 </div>
@@ -231,18 +285,19 @@
     }
 
     function init() {
-        const cats = new Set(), lights = new Set(), moists = new Set();
+        const cats = new Set(), lights = new Set(), moists = new Set(), times = new Set(), colors = new Set();
         
         appPlantData.forEach(p => {
             cats.add(p.cat);
-            // Now it will ONLY separate items if there is a comma
             p.l.split(',').forEach(v => { if (v.trim()) lights.add(v.trim()) });
             p.m.split(',').forEach(v => { if (v.trim()) moists.add(v.trim()) });
+            p.bt.split(',').forEach(v => { if (v.trim()) times.add(v.trim()) });
+            p.bc.split(',').forEach(v => { if (v.trim()) colors.add(v.trim()) });
         });
 
         const populate = (id, set) => {
             const el = document.getElementById(id);
-            Array.from(set).sort().forEach(val => {
+            Array.from(set).filter(Boolean).sort().forEach(val => {
                 el.innerHTML += `<option value="${val}">${val}</option>`;
             });
         };
@@ -250,6 +305,8 @@
         populate('fCat', cats);
         populate('fLight', lights);
         populate('fMoist', moists);
+        populate('fTime', times);
+        populate('fColor', colors);
 
         document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateFilters));
         updateFilters();
